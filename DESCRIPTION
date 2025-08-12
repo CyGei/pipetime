@@ -1,0 +1,23 @@
+Package: pipetime
+Type: Package
+Title: Tools to Time Pipe Operations
+Version: 0.0.1
+Authors@R: 
+    person("Cyril", "Geismar", email = "c.geismar21@imperial.ac.uk", role = c("aut", "cre", "cph"),
+           comment = c(ORCID = "0000-0002-8486-5890"))
+Description: Provides simple functions to measure and record 
+    the execution time of pipe operations (using |>). You can time operations 
+    at specific points within a pipeline or at its end, with optional 
+    logging to a file and output to the console.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Suggests: 
+    testthat (>= 3.0.0),
+    dplyr,
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+RoxygenNote: 7.3.2
+Roxygen: list(markdown = TRUE)
+VignetteBuilder: knitr

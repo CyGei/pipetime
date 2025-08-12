@@ -1,0 +1,71 @@
+---
+title: "pipetime"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{pipetime}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# Overview
+
+The **pipetime** package provides simple functions to measure and record the execution time of R pipelines (`|>`). 
+
+You can time specific steps within a pipeline or the entire pipeline end, with optional logging to file and console output.
+
+# Installation
+```{r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("yourusername/pipetime")
+```
+
+# Usage
+## Timing a pipeline step
+You can use `time_start()` and `time_end()` to time a specific step in a pipeline.
+
+```{r}
+library(pipetime)
+library(dplyr)
+
+tibble(id = 1:100) |>
+  time_start("A complex calculus") |>
+  mutate(x = {Sys.sleep(0.5); rnorm(100)}) |>
+  time_end() |> 
+  head()
+```
+
+You can also record the steps into a log file using `log_file` argument. It will create a log file and append the execution time of each step.
+
+```{r}
+# here we create a tempfile but you do not need to do this in your code
+my_log <- tempfile(fileext = ".txt")
+
+tibble(id = 1:100, group = rep(c("A", "B"), 50)) |>
+  
+  time_start(label = "random draws") |>
+  mutate(x = {Sys.sleep(0.5); rnorm(100)}) |>
+  time_end() |>
+  
+  time_start(label = "summary operation") |>
+  group_by(group) |>
+  summarise(mean_x = mean(x)) |>
+  time_end()
+  
+```
+
+
+
+# Or using `timer()` to time an expression 
+
+```{r}
+mtcars |>
+  mutate(hp2 = {Sys.sleep(0.5); hp * 2}) |>
+  timer("Doubling horse power")
+```
