@@ -24,6 +24,6 @@ The result of evaluating the function call on \code{data}.
 }
 \description{
 This helper evaluates a function call on a data object and measures how long it takes.
-Used internally by \code{pipetime()}.
+Used internally by \code{time_pipe()}.
 }
 \keyword{internal}

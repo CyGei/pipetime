@@ -27,6 +27,6 @@ The evaluated data object. Timing messages are printed or logged separately.
 \description{
 This helper measures how long it takes to evaluate a data object (or expression)
 when no function call is provided.
-Used internally by \code{pipetime()}.
+Used internally by \code{time_pipe()}.
 }
 \keyword{internal}

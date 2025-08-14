@@ -1,5 +1,5 @@
 
-test_that("pipetime timing is similar to microbenchmark", {
+test_that("time_pipe timing is similar to microbenchmark", {
   df <- data.frame(x = 1:20, group = rep(letters[1:2], each = 10))
 
   # Reference timing with microbenchmark (mean in seconds)
@@ -15,14 +15,14 @@ test_that("pipetime timing is similar to microbenchmark", {
   )
   ref_time <- mean(mb$time) / 1e9  # convert nanoseconds to seconds
 
-  # pipetime
+  # time_pipe
   pipe_file <- tempfile(fileext = ".log")
   p <- df |>
     dplyr::group_by(group) |>
     dplyr::mutate(sleep = Sys.sleep(1)) |>
     dplyr::ungroup() |>
     dplyr::summarise(mean_x = mean(x)) |>
-    pipetime("summary", log_file = pipe_file, console = FALSE)
+    time_pipe("summary", log_file = pipe_file, console = FALSE)
 
   pipe_lines <- readLines(pipe_file)
   pipe_val <- as.numeric(sub(".*: ([0-9.]+) secs elapsed ", "\\1", pipe_lines[1]))
@@ -33,7 +33,7 @@ test_that("pipetime timing is similar to microbenchmark", {
 
 
 
-test_that("pipetime step timing matches microbenchmark for each step", {
+test_that("time_pipe step timing matches microbenchmark for each step", {
   df <- data.frame(x = 1:20, group = rep(letters[1:2], each = 10))
 
   # Step 1: group_by
@@ -46,7 +46,7 @@ test_that("pipetime step timing matches microbenchmark for each step", {
   pipe_file <- tempfile(fileext = ".log")
   df |>
     dplyr::group_by(group) |>
-    pipetime("group_by", log_file = pipe_file, console = FALSE)
+    time_pipe("group_by", log_file = pipe_file, console = FALSE)
 
   step_lines <- readLines(pipe_file)
   pipe_group <- as.numeric(sub(".*: ([0-9.]+) secs elapsed ", "\\1", step_lines[1]))
@@ -65,7 +65,7 @@ test_that("pipetime step timing matches microbenchmark for each step", {
   df |>
     dplyr::group_by(group) |>
     dplyr::mutate(sleep = Sys.sleep(1)) |>
-    pipetime("mutate", log_file = pipe_file, console = FALSE)
+    time_pipe("mutate", log_file = pipe_file, console = FALSE)
 
   step_lines <- readLines(pipe_file)
   pipe_mutate <- as.numeric(sub(".*: ([0-9.]+) secs elapsed ", "\\1", step_lines[1]))

@@ -13,29 +13,29 @@
 #' @examples
 #' library(dplyr)
 #' mtcars |>
-#'   pipetime(group_by(cyl), "grouping") |>
-#'   pipetime(summarise(avg_hp = mean(hp)), "aggregation")
+#'   time_pipe(group_by(cyl), "grouping") |>
+#'   time_pipe(summarise(avg_hp = mean(hp)), "aggregation")
 #'
 #' mtcars |>
 #'   mutate(hp2 = {
 #'     Sys.sleep(1)
 #'     hp * 2
 #'   }) |>
-#'   pipetime("entire pipeline")
+#'   time_pipe("entire pipeline")
 #'
 #' @export
 #'
-pipetime <- function(.data,
-                     action = NULL,
-                     label = NULL,
-                     log_file = NULL,
-                     console = TRUE,
-                     time_unit = c("secs", "millisecs", "mins")) {
+time_pipe <- function(.data,
+                      action = NULL,
+                      label = NULL,
+                      log_file = NULL,
+                      console = TRUE,
+                      time_unit = c("secs", "millisecs", "mins")) {
   time_unit <- match.arg(time_unit)
 
   # Capture the unevaluated expressions
   action_expr <- substitute(action)
-  data_expr   <- substitute(.data)
+  data_expr <- substitute(.data)
 
   # --- Dispatch to appropriate case ---
   if (!missing(action) && is.call(action_expr)) {

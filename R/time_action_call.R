@@ -1,7 +1,7 @@
 #' Time a function call applied to data
 #'
 #' This helper evaluates a function call on a data object and measures how long it takes.
-#' Used internally by `pipetime()`.
+#' Used internally by `time_pipe()`.
 #'
 #' @param data The data object to pass as the first argument to the function.
 #' @param action_expr The function call to execute on the data.

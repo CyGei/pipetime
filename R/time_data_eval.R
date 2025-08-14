@@ -2,7 +2,7 @@
 #'
 #' This helper measures how long it takes to evaluate a data object (or expression)
 #' when no function call is provided.
-#' Used internally by `pipetime()`.
+#' Used internally by `time_pipe()`.
 #'
 #' @param data The data object.
 #' @param data_expr The unevaluated data expression.
