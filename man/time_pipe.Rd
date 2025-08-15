@@ -8,25 +8,22 @@ This can be used to check performance of steps in your data workflow.}
 \usage{
 time_pipe(
   .data,
-  action = NULL,
   label = NULL,
   log_file = NULL,
   console = TRUE,
-  time_unit = c("secs", "millisecs", "mins")
+  time_unit = c("secs", "millisecs", "mins", "hours")
 )
 }
 \arguments{
 \item{.data}{A data object to pass through the pipeline.}
 
-\item{action}{Optional. A function call to apply to \code{.data}. If not provided, the function will time \code{.data} itself.}
-
-\item{label}{Optional. A descriptive name for the operation. If not provided, a name will be generated automatically.}
+\item{label}{Optional. A descriptive name for the operation. If not provided, the expression will be passed.}
 
 \item{log_file}{Optional. File path to write timing logs. If \code{NULL}, messages are only printed to the console.}
 
 \item{console}{Logical. Whether to print timing messages to the console. Default is \code{TRUE}.}
 
-\item{time_unit}{Character. Unit of time to report. One of \code{"secs"}, \code{"millisecs"}, or \code{"mins"}.}
+\item{time_unit}{Character. Unit of time to report. One of \code{"secs"}, \code{"millisecs"}, \code{"mins"} or \code{"hours"}.}
 }
 \value{
 Returns the result of the pipeline step, unchanged. Timing messages are printed or logged separately.
@@ -38,15 +35,10 @@ This can be used to check performance of steps in your data workflow.
 }
 \examples{
 library(dplyr)
-mtcars |>
-  time_pipe(group_by(cyl), "grouping") |>
-  time_pipe(summarise(avg_hp = mean(hp)), "aggregation")
-
-mtcars |>
-  mutate(hp2 = {
-    Sys.sleep(1)
-    hp * 2
-  }) |>
-  time_pipe("entire pipeline")
+data.frame(x = 1:3) |>
+mutate(y = {Sys.sleep(0.5); x*2 }) |>
+time_pipe("calc 1") |>
+mutate(z = {Sys.sleep(0.5); x/2 }) |>
+time_pipe("total pipeline")
 
 }

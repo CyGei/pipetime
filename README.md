@@ -1,112 +1,78 @@
 
-# pipetime <img src="man/figures/logo.png" align="right" height="127" alt="" />
+# pipetime <img src="man/figures/logo.png" align="right" height="127"/>
 
 The `pipetime` package lets you measure how long your pipeline (`|>`)
 operations take. It works with the native R pipe and fits naturally into
 **tidy workflows**.
 
-You can use `time_pipe()` in two ways:
-
-1.  **Time a single step:** wrap `time_pipe()` around a specific `dplyr`
-    operation. Only that step is measured.
-
-2.  **Time a whole pipeline up to a point:** place `time_pipe()` at the
-    end of a pipeline. It will report the total time for all steps up to
-    that point.
-
-Timing messages can be printed to the console or saved to a file.
+# Installation
 
 ``` r
 # devtools::install_github("CyGei/pipetime")
 library(pipetime)
 library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
 ```
 
-# Timing a Single Step
+# Example
 
-Wrap `time_pipe()` around a specific operation:
+Place `time_pipe()` at any point in a pipeline to measure elapsed time
+**from the start** up to that point:
 
 ``` r
-data.frame(x = 1:6) |>
-  time_pipe(mutate(y = {Sys.sleep(0.2); rnorm(n(), mean = x)}), "random draw") |>
-  mutate(y2 = y^2) |>
-  summarise(avg_y = mean(y))
-#> [2025-08-14 20:07:12.871] random draw: 0.2080 secs elapsed
-#>      avg_y
-#> 1 3.618334
+data.frame(x = 1:3) |>
+  mutate(sleep = Sys.sleep(0.1)) |> # e.g. a complex operation
+  summarise(mean_x = mean(x)) |>
+  time_pipe("total pipeline") # ~0.1 sec
+#> [2025-08-15 16:09:10.884] total pipeline: 0.1103 secs
+#>   mean_x
+#> 1      2
 ```
 
-Only the `mutate(y = …)` step is timed.
+- The timing includes all operations before `time_pipe()`.
 
-# Timing a Whole Pipeline
-
-Place `time_pipe()` on the data at the end (or after multiple steps):
+- You can insert multiple `time_pipe()` calls to create **checkpoints**
+  along the pipeline:
 
 ``` r
-data.frame(x = 1:6) |>
-  mutate(y = {Sys.sleep(0.2); rnorm(n(), mean = x)}) |> 
-  mutate(z = {Sys.sleep(0.2); rnorm(n(), mean = x^2)}) |> 
-  summarise(avg_y = mean(y),
-            avg_z = mean(z)) |>
-  time_pipe("total pipeline time")
-#> [2025-08-14 20:07:13.097] total pipeline time: 0.4279 secs elapsed
-#>      avg_y    avg_z
-#> 1 4.194857 15.51165
+complex_fn <- function(duration,x) {
+  Sys.sleep(duration)  # Simulate a time-consuming operation
+  rnorm(n = length(x), mean = x, sd = 1)
+}
+
+data.frame(x = 1:5) |> 
+  dplyr::mutate(y = complex_fn(0.5, x)) |>
+  time_pipe("compute y") |> 
+  dplyr::mutate(z = complex_fn(0.5, y)) |> 
+  time_pipe("compute z") |>
+  dplyr::summarise(mean_z = mean(z)) |>
+  time_pipe("total pipeline")
+#> [2025-08-15 16:09:11.011] compute y: 0.5145 secs
+#> [2025-08-15 16:09:11.011] compute z: 1.0311 secs
+#> [2025-08-15 16:09:11.011] total pipeline: 1.0337 secs
+#>     mean_z
+#> 1 3.358939
 ```
 
-Here, the timing includes **all previous operations** in the pipeline,
-giving the total time.
-
-You can place `time_pipe()` at several points in a pipeline to
-**cumulatively measure total time up to each point**. Each `time_pipe()`
-marks a checkpoint and records the elapsed time for all operations since
-the start of the pipeline:
-
-``` r
-data.frame(x = 1) |> 
-  # Step 1: small operation
-  mutate(a = { Sys.sleep(1); 1}) |> 
-  time_pipe("Step 1") |>   # ~1 sec
-  
-  # Step 2: multiple operations
-  mutate(b = { Sys.sleep(1); 1},
-         c = { Sys.sleep(1); 1}) |> 
-  time_pipe("Step 2") |>   # ~3 sec
-  
-  # Step 3: final summarise
-  summarise(total = sum(a + b + c),
-            pause = {Sys.sleep(1); 1}) |> 
-  time_pipe("Total Pipeline")  # ~4 sec
-#> [2025-08-14 20:07:13.537] Step 1: 1.0132 secs elapsed
-#> [2025-08-14 20:07:13.537] Step 2: 3.0460 secs elapsed
-#> [2025-08-14 20:07:13.537] Total Pipeline: 4.0619 secs elapsed
-#>   total pause
-#> 1     3     1
-```
+- Each `time_pipe()` reports the cumulative time since the start of the
+  pipeline.
 
 # Logging to a File
 
 You can save timing logs to a file using the `log_file` argument:
 
 ``` r
-log_file <- tempfile(fileext = ".log")
+log <- tempfile(fileext = ".log")
 
-df <- mtcars |>
-  mutate(hp2 = {Sys.sleep(0.1); hp * 2}) |>
-  time_pipe("Step 1", log_file = log_file, console = FALSE) |>
-  mutate(hp3 = {Sys.sleep(0.1); hp * 3}) |>
-  time_pipe("Step 2", log_file = log_file, console = FALSE)
+df <- data.frame(x = 1:5) |> 
+  dplyr::mutate(y = complex_fn(0.1, x)) |>
+  time_pipe("compute y", log_file = log, console = FALSE ) |> 
+  dplyr::mutate(z = complex_fn(0.1, y)) |> 
+  time_pipe("compute z", log_file = log, console = FALSE) |>
+  dplyr::summarise(mean_z = mean(z)) |>
+  time_pipe("total pipeline",log_file = log, console = FALSE)
 
-# View log
-cat(readLines(log_file), sep = "\n")
-#> [2025-08-14 20:07:17.618] Step 1: 0.1087 secs elapsed 
-#> [2025-08-14 20:07:17.618] Step 2: 0.2219 secs elapsed
+readLines(log)
+#> [1] "[2025-08-15 16:09:12.064] compute y: 0.1111 secs "     
+#> [2] "[2025-08-15 16:09:12.064] compute z: 0.2218 secs "     
+#> [3] "[2025-08-15 16:09:12.064] total pipeline: 0.2235 secs "
 ```

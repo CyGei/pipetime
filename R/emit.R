@@ -10,15 +10,38 @@
 #' @param log_file Optional character path to a file to append the message.
 #'
 #' @return Invisibly returns the duration of the operation.
+#' @importFrom crayon blue green
 #' @keywords internal
 emit <- function(start, end, label, time_unit, console = TRUE, log_file = NULL) {
-  duration <- format_duration(start, end, time_unit)
-  msg <- sprintf("[%s] %s: %.4f %s elapsed",
-                 format(start, "%Y-%m-%d %H:%M:%OS3"),
-                 label,
-                 duration,
-                 time_unit)
-  if (console) message(msg)
-  if (!is.null(log_file)) cat(msg, "\n", file = log_file, append = TRUE)
+
+  duration <- as.numeric(difftime(end, start, units = time_unit))
+  duration <- format(round(duration, 4), nsmall = 4)
+  timestamp <- format(start, "%Y-%m-%d %H:%M:%OS3")
+
+  build_msg <- function(timestamp, label, duration, time_unit) {
+    paste0("[", timestamp, "] ", label, ": ", duration, " ", time_unit)
+  }
+
+  if (console) {
+    console_msg <- build_msg(
+      timestamp,
+      crayon::blue(label),
+      crayon::green(duration),
+      crayon::green(time_unit)
+    )
+    message(console_msg)
+  }
+
+  if (!is.null(log_file)) {
+    log_msg <- build_msg(
+      timestamp,
+      label,
+      duration,
+      time_unit
+    )
+
+    cat(log_msg, "\n", file = log_file, append = TRUE)
+  }
+
   invisible(duration)
 }
