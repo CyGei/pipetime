@@ -114,8 +114,8 @@ Can also be set globally via <code>options(pipetime.time_unit = "secs")</code>. 
 <span class="r-in"><span><span class="fu">time_pipe</span><span class="op">(</span><span class="st">"calc 1"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span>; <span class="va">x</span><span class="op">/</span><span class="fl">2</span> <span class="op">}</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span><span class="fu">time_pipe</span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [2025-08-21 18:04:24.223] <span style="color: #0000BB;">calc 1</span>: <span style="color: #00BB00;">0.5092</span> <span style="color: #00BB00;">secs</span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> [2025-08-21 18:04:24.223] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">1.0132</span> <span style="color: #00BB00;">secs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [2025-08-21 18:18:46.299] <span style="color: #0000BB;">calc 1</span>: <span style="color: #00BB00;">0.5105</span> <span style="color: #00BB00;">secs</span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> [2025-08-21 18:18:46.299] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">1.0146</span> <span style="color: #00BB00;">secs</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   x y   z</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 1 2 0.5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 2 4 1.0</span>
