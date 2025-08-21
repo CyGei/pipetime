@@ -2,5 +2,5 @@ pandoc: 3.1.11
 pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
-  introduction: introduction.html
-last_built: 2025-08-15T15:12Z
+  timing_operations_in_pipelines: timing_operations_in_pipelines.html
+last_built: 2025-08-21T13:35Z
