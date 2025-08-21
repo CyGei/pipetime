@@ -1,9 +1,9 @@
 
 # pipetime <img src="man/figures/logo.png" align="right" height="127"/>
 
-`pipetime` measures how long your pipeline operations take. It works
-with the native R pipe (`|>`) and fits naturally into **tidy
-workflows**.
+`pipetime` measures the runtime of your pipeline operations. It works
+with the native R pipe (`|>`) and fits naturally into ‘*tidy
+workflows*’.
 
 # Installation
 
@@ -23,7 +23,7 @@ data.frame(x = 1:3) |>
   mutate(sleep = Sys.sleep(0.1)) |> # e.g. a complex operation
   summarise(mean_x = mean(x)) |>
   time_pipe("total pipeline") # ~0.1 sec
-#> [2025-08-21 13:48:34.243] total pipeline: 0.1172 secs
+#> [2025-08-21 14:56:45.551] total pipeline: 0.1247 secs
 #>   mean_x
 #> 1      2
 ```
@@ -46,11 +46,11 @@ data.frame(x = 1:5) |>
   time_pipe("compute z") |>
   dplyr::summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline")
-#> [2025-08-21 13:48:34.376] compute y: 0.5182 secs
-#> [2025-08-21 13:48:34.376] compute z: 1.0311 secs
-#> [2025-08-21 13:48:34.376] total pipeline: 1.0334 secs
+#> [2025-08-21 14:56:45.692] compute y: 0.5041 secs
+#> [2025-08-21 14:56:45.692] compute z: 1.0210 secs
+#> [2025-08-21 14:56:45.692] total pipeline: 1.0229 secs
 #>     mean_z
-#> 1 2.801535
+#> 1 3.154168
 ```
 
 - Each `time_pipe()` reports the cumulative time since the start of the
@@ -80,6 +80,6 @@ directory.
 readLines("pipetime.log")
 ```
 
-    #> [1] "[2025-08-21 13:48:35.431] compute y: 0.1114 secs "     
-    #> [2] "[2025-08-21 13:48:35.431] compute z: 0.2303 secs "     
-    #> [3] "[2025-08-21 13:48:35.431] total pipeline: 0.2331 secs "
+    #> [1] "[2025-08-21 14:56:46.734] compute y: 0.1205 secs "     
+    #> [2] "[2025-08-21 14:56:46.734] compute z: 0.2281 secs "     
+    #> [3] "[2025-08-21 14:56:46.734] total pipeline: 0.2306 secs "
