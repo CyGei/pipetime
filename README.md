@@ -23,7 +23,7 @@ data.frame(x = 1:3) |>
   mutate(sleep = Sys.sleep(0.1)) |> # e.g. a complex operation
   summarise(mean_x = mean(x)) |>
   time_pipe("total pipeline") # ~0.1 sec
-#> [2025-08-21 14:56:45.551] total pipeline: 0.1247 secs
+#> [2025-08-21 18:55:49.554] total pipeline: 0.1197 secs
 #>   mean_x
 #> 1      2
 ```
@@ -46,11 +46,11 @@ data.frame(x = 1:5) |>
   time_pipe("compute z") |>
   dplyr::summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline")
-#> [2025-08-21 14:56:45.692] compute y: 0.5041 secs
-#> [2025-08-21 14:56:45.692] compute z: 1.0210 secs
-#> [2025-08-21 14:56:45.692] total pipeline: 1.0229 secs
+#> [2025-08-21 18:55:49.690] compute y: 0.5106 secs
+#> [2025-08-21 18:55:49.690] compute z: 1.0272 secs
+#> [2025-08-21 18:55:49.690] total pipeline: 1.0291 secs
 #>     mean_z
-#> 1 3.154168
+#> 1 3.213781
 ```
 
 - Each `time_pipe()` reports the cumulative time since the start of the
@@ -80,6 +80,6 @@ directory.
 readLines("pipetime.log")
 ```
 
-    #> [1] "[2025-08-21 14:56:46.734] compute y: 0.1205 secs "     
-    #> [2] "[2025-08-21 14:56:46.734] compute z: 0.2281 secs "     
-    #> [3] "[2025-08-21 14:56:46.734] total pipeline: 0.2306 secs "
+    #> [1] "[2025-08-21 18:55:50.739] compute y: 0.1031 secs "     
+    #> [2] "[2025-08-21 18:55:50.739] compute z: 0.2124 secs "     
+    #> [3] "[2025-08-21 18:55:50.739] total pipeline: 0.2143 secs "

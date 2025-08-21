@@ -7,12 +7,12 @@
 #' @param label Character string to describe the operation being timed.
 #' @param time_unit Character; the unit in which to report the duration.
 #' @param console Logical; whether to print the message to the console.
-#' @param log_file Optional character path to a file to append the message.
+#' @param log_file Character; path to a file to append the message.
 #'
 #' @return Invisibly returns the duration of the operation.
 #' @importFrom crayon blue green
 #' @keywords internal
-emit <- function(start, end, label, time_unit, console = TRUE, log_file = NULL) {
+emit <- function(start, end, label, time_unit, console, log_file) {
 
   duration <- as.numeric(difftime(end, start, units = time_unit))
   duration <- format(round(duration, 4), nsmall = 4)

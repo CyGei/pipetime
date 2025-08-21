@@ -4,7 +4,7 @@
 \alias{emit}
 \title{Emit a timing message}
 \usage{
-emit(start, end, label, time_unit, console = TRUE, log_file = NULL)
+emit(start, end, label, time_unit, console, log_file)
 }
 \arguments{
 \item{start}{A \code{POSIXct} object indicating the start time.}
@@ -17,7 +17,7 @@ emit(start, end, label, time_unit, console = TRUE, log_file = NULL)
 
 \item{console}{Logical; whether to print the message to the console.}
 
-\item{log_file}{Optional character path to a file to append the message.}
+\item{log_file}{Character; path to a file to append the message.}
 }
 \value{
 Invisibly returns the duration of the operation.

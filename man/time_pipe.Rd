@@ -8,8 +8,8 @@ time_pipe(
   .data,
   label = NULL,
   log_file = NULL,
-  console = TRUE,
-  time_unit = c("secs", "millisecs", "mins", "hours")
+  console = NULL,
+  time_unit = NULL
 )
 }
 \arguments{
@@ -18,18 +18,21 @@ time_pipe(
 \item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
 
 \item{log_file}{Optional. File to write timing logs.
-A global default can be set with \code{options(pipetime.log_file = "filename.log")}.}
+Can also be set globally via \code{options(pipetime.log_file = "filename.log")}.
+Defaults to NULL (no logging).}
 
-\item{console}{Logical. Print messages to the console? Default \code{TRUE}.}
+\item{console}{Logical. Print messages to the console? Can also be set globally via
+\code{options(pipetime.console = TRUE)}. Defaults to TRUE.}
 
-\item{time_unit}{Character. Unit of time: \code{"secs"}, \code{"millisecs"}, \code{"mins"}, or \code{"hours"}. Default to \code{"secs"}.}
+\item{time_unit}{Character. Unit of time: "secs", "millisecs", "mins", or "hours".
+Can also be set globally via \code{options(pipetime.time_unit = "secs")}. Defaults to "secs".}
 }
 \value{
 The input object, unchanged. Timing messages are printed or logged separately.
 }
 \description{
-Record how long a step in a pipeline (\verb{|>}) takes.
-Can print to the console or log to a file.
+Record the runtime of a pipeline (|>) operation. Can print to the console
+or log to a file. Arguments can also be set globally via options().
 }
 \examples{
 library(dplyr)
