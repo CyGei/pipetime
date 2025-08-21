@@ -77,7 +77,7 @@
 <div class="section level1">
 <div class="page-header"><h1 id="pipetime-">pipetime <img src="reference/figures/logo.png" align="right" height="127"><a class="anchor" aria-label="anchor" href="#pipetime-"></a>
 </h1></div>
-<p><code>pipetime</code> measures how long your pipeline operations take. It works with the native R pipe (<code>|&gt;</code>) and fits naturally into <strong>tidy workflows</strong>.</p>
+<p><code>pipetime</code> measures the runtime of your pipeline operations. It works with the native R pipe (<code>|&gt;</code>) and fits naturally into ‘<em>tidy workflows</em>’.</p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -96,7 +96,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sleep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># e.g. a complex operation</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span> <span class="co"># ~0.1 sec</span></span>
-<span><span class="co">#&gt; [2025-08-21 13:48:34.243] total pipeline: 0.1172 secs</span></span>
+<span><span class="co">#&gt; [2025-08-21 14:56:45.551] total pipeline: 0.1247 secs</span></span>
 <span><span class="co">#&gt;   mean_x</span></span>
 <span><span class="co">#&gt; 1      2</span></span></code></pre></div>
 <ul>
@@ -116,11 +116,11 @@
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute z"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-08-21 13:48:34.376] compute y: 0.5182 secs</span></span>
-<span><span class="co">#&gt; [2025-08-21 13:48:34.376] compute z: 1.0311 secs</span></span>
-<span><span class="co">#&gt; [2025-08-21 13:48:34.376] total pipeline: 1.0334 secs</span></span>
+<span><span class="co">#&gt; [2025-08-21 14:56:45.692] compute y: 0.5041 secs</span></span>
+<span><span class="co">#&gt; [2025-08-21 14:56:45.692] compute z: 1.0210 secs</span></span>
+<span><span class="co">#&gt; [2025-08-21 14:56:45.692] total pipeline: 1.0229 secs</span></span>
 <span><span class="co">#&gt;     mean_z</span></span>
-<span><span class="co">#&gt; 1 2.801535</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 3.154168</span></span></code></pre></div>
 <ul>
 <li>Each <code><a href="reference/time_pipe.html">time_pipe()</a></code> reports the cumulative time since the start of the pipeline.</li>
 </ul>
@@ -141,9 +141,9 @@
 <p>All timing messages will then be logged to <code>pipetime.log</code> in the working directory.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/readLines.html" class="external-link">readLines</a></span><span class="op">(</span><span class="st">"pipetime.log"</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#&gt; [1] "[2025-08-21 13:48:35.431] compute y: 0.1114 secs "     </span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [2] "[2025-08-21 13:48:35.431] compute z: 0.2303 secs "     </span></span>
-<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; [3] "[2025-08-21 13:48:35.431] total pipeline: 0.2331 secs "</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co">#&gt; [1] "[2025-08-21 14:56:46.734] compute y: 0.1205 secs "     </span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a><span class="co">#&gt; [2] "[2025-08-21 14:56:46.734] compute z: 0.2281 secs "     </span></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a><span class="co">#&gt; [3] "[2025-08-21 14:56:46.734] total pipeline: 0.2306 secs "</span></span></code></pre></div>
 </div>
 
   </div>
