@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 # pipetime <img src="man/figures/logo.png" align="right" height="127"/>
 
-The `pipetime` package lets you measure how long your pipeline (`|>`) operations take. It works with the native R pipe and fits naturally into **tidy workflows**.
+`pipetime` measures the runtime of your pipeline operations. It works with the native R pipe (`|>`) and fits naturally into '*tidy workflow*'.
 
 # Installation
 
@@ -34,7 +34,7 @@ data.frame(x = 1:3) |>
 
 -   The timing includes all operations before `time_pipe()`.
 
--   You can insert multiple `time_pipe()` calls to create **checkpoints** along the pipeline:
+-   You can insert multiple `time_pipe()` calls to add **checkpoints** along the pipeline:
 
 ```{r}
 complex_fn <- function(duration,x) {
@@ -56,18 +56,39 @@ data.frame(x = 1:5) |>
 
 # Logging to a File
 
-You can save timing logs to a file using the `log_file` argument:
+You can save timing logs to a file using the `log_file` argument. 
+For simplicity, you can set a global default for the session using `options()`:
 
-```{r}
+```{r, echo=FALSE, eval=TRUE}
+# Safe execution with a temporary file
 log <- tempfile(fileext = ".log")
+options(pipetime.log_file = log)
 
 df <- data.frame(x = 1:5) |> 
   dplyr::mutate(y = complex_fn(0.1, x)) |>
-  time_pipe("compute y", log_file = log, console = FALSE ) |> 
-  dplyr::mutate(z = complex_fn(0.1, y)) |> 
-  time_pipe("compute z", log_file = log, console = FALSE) |>
+  time_pipe("compute y", console = FALSE) |> 
+  dplyr::mutate(z = complex_fn(0.1, y)) |>
+  time_pipe("compute z", console = FALSE) |>
   dplyr::summarise(mean_z = mean(z)) |>
-  time_pipe("total pipeline",log_file = log, console = FALSE)
+  time_pipe("total pipeline", console = FALSE)
+```
 
+```{r, echo=TRUE, eval=FALSE}
+options(pipetime.log_file = "pipetime.log")
+df <- data.frame(x = 1:5) |> 
+  dplyr::mutate(y = complex_fn(0.1, x)) |>
+  time_pipe("compute y",console = FALSE ) |> 
+  dplyr::mutate(z = complex_fn(0.1, y)) |> 
+  time_pipe("compute z",console = FALSE) |>
+  dplyr::summarise(mean_z = mean(z)) |>
+  time_pipe("total pipeline",console = FALSE)
+```
+All timing messages will then be logged to `pipetime.log` in the working directory.
+
+```{r echo=TRUE, eval=FALSE}
+readLines("pipetime.log")
+```
+
+```{r, echo=FALSE, eval=TRUE}
 readLines(log)
 ```

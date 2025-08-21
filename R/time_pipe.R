@@ -1,14 +1,16 @@
-#' Time operations in a pipeline
-#' Measure how long a data operation or function takes within a pipeline (`|>`).
-#' This can be used to check performance of steps in your data workflow.
+#' Measure execution time in a pipeline
 #'
-#' @param .data A data object to pass through the pipeline.
-#' @param label Optional. A descriptive name for the operation. If not provided, the expression will be passed.
-#' @param log_file Optional. File path to write timing logs. If `NULL`, messages are only printed to the console.
-#' @param console Logical. Whether to print timing messages to the console. Default is `TRUE`.
-#' @param time_unit Character. Unit of time to report. One of `"secs"`, `"millisecs"`, `"mins"` or `"hours"`.
+#' Record how long a step in a pipeline (`|>`) takes.
+#' Can print to the console or log to a file.
 #'
-#' @return Returns the result of the pipeline step, unchanged. Timing messages are printed or logged separately.
+#' @param .data The input object to pass through the pipeline.
+#' @param label Optional. Name for the operation. Defaults to the expression if not provided.
+#' @param log_file Optional. File to write timing logs.
+#'   A global default can be set with `options(pipetime.log_file = "filename.log")`.
+#' @param console Logical. Print messages to the console? Default `TRUE`.
+#' @param time_unit Character. Unit of time: `"secs"`, `"millisecs"`, `"mins"`, or `"hours"`. Default to `"secs"`.
+#'
+#' @return The input object, unchanged. Timing messages are printed or logged separately.
 #' @examples
 #' library(dplyr)
 #' data.frame(x = 1:3) |>
@@ -24,6 +26,13 @@ time_pipe <- function(.data,
                       log_file = NULL,
                       console = TRUE,
                       time_unit = c("secs", "millisecs", "mins", "hours")) {
+
+  # Check if user has provided a log file option
+  if (is.null(log_file)) {
+    log_file <- getOption("pipetime.log_file", NULL)
+  }
+
+
   time_unit <- match.arg(time_unit)
 
   start <- Sys.time()

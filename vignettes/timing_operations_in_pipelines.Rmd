@@ -1,0 +1,81 @@
+---
+title: "Timing Operations in R Pipelines"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{timing_operations_in_pipelines}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+# Suppress vignette title mismatch warning
+options(rmarkdown.html_vignette.check_title = FALSE)
+```
+
+```{r setup}
+library(pipetime)
+library(dplyr)
+```
+
+# Motivation
+
+R pipelines (`|>`) allow chaining operations in a readable, sequential way. Existing timing tools (e.g. `system.time()`, `tictoc`) do not integrate naturally with pipelines and tidy workflows.
+
+# Demonstration
+
+```{r}
+complex_fn <- function(x) {
+  Sys.sleep(0.1)  # Simulate a time-consuming operation
+  x^2
+}
+```
+
+## `system.time()`
+
+```{r}
+# Must wrap entire pipeline, breaking the flow
+the_time <- system.time({
+  df <- data.frame(x = 1:3) |>
+    mutate(y = complex_fn(x)) |>
+    summarise(mean_y = mean(y))
+})
+the_time
+df
+```
+
+## `tictoc`
+
+```{r}
+library(tictoc)
+
+# Manual start/stop, not inline
+tic("total pipeline")
+df <- data.frame(x = 1:3) |>
+  mutate(y = complex_fn(x)) |>
+  summarise(mean_y = mean(y))
+toc()
+df
+```
+
+## `time_pipe`
+
+```{r}
+# Inline timing checkpoints, keeps pipeline flow
+data.frame(x = 1:3) |>
+  mutate(y = complex_fn(x)) |>
+  time_pipe("after mutate") |>
+  summarise(mean_y = mean(y)) |>
+  time_pipe("total pipeline")
+```
+
+# Why `pipetime`?
+
+-   Works directly inside pipelines.
+
+-   Supports multiple timing checkpoints.
+
+-   Prints cumulative time without breaking the pipeline.

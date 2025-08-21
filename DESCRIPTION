@@ -14,10 +14,11 @@ Suggests:
     testthat (>= 3.0.0),
     dplyr,
     microbenchmark,
+    tictoc,
     knitr,
     rmarkdown
 Config/testthat/edition: 3
 RoxygenNote: 7.3.2
 Roxygen: list(markdown = TRUE)
-VignetteBuilder: knitr
 URL: https://cygei.github.io/pipetime/
+VignetteBuilder: knitr

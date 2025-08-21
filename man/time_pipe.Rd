@@ -2,9 +2,7 @@
 % Please edit documentation in R/time_pipe.R
 \name{time_pipe}
 \alias{time_pipe}
-\title{Time operations in a pipeline
-Measure how long a data operation or function takes within a pipeline (\verb{|>}).
-This can be used to check performance of steps in your data workflow.}
+\title{Measure execution time in a pipeline}
 \usage{
 time_pipe(
   .data,
@@ -15,23 +13,23 @@ time_pipe(
 )
 }
 \arguments{
-\item{.data}{A data object to pass through the pipeline.}
+\item{.data}{The input object to pass through the pipeline.}
 
-\item{label}{Optional. A descriptive name for the operation. If not provided, the expression will be passed.}
+\item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
 
-\item{log_file}{Optional. File path to write timing logs. If \code{NULL}, messages are only printed to the console.}
+\item{log_file}{Optional. File to write timing logs.
+A global default can be set with \code{options(pipetime.log_file = "filename.log")}.}
 
-\item{console}{Logical. Whether to print timing messages to the console. Default is \code{TRUE}.}
+\item{console}{Logical. Print messages to the console? Default \code{TRUE}.}
 
-\item{time_unit}{Character. Unit of time to report. One of \code{"secs"}, \code{"millisecs"}, \code{"mins"} or \code{"hours"}.}
+\item{time_unit}{Character. Unit of time: \code{"secs"}, \code{"millisecs"}, \code{"mins"}, or \code{"hours"}. Default to \code{"secs"}.}
 }
 \value{
-Returns the result of the pipeline step, unchanged. Timing messages are printed or logged separately.
+The input object, unchanged. Timing messages are printed or logged separately.
 }
 \description{
-Time operations in a pipeline
-Measure how long a data operation or function takes within a pipeline (\verb{|>}).
-This can be used to check performance of steps in your data workflow.
+Record how long a step in a pipeline (\verb{|>}) takes.
+Can print to the console or log to a file.
 }
 \examples{
 library(dplyr)
