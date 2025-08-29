@@ -5,13 +5,10 @@
 #'
 #' @param .data The input object to pass through the pipeline.
 #' @param label Optional. Name for the operation. Defaults to the expression if not provided.
-#' @param log_file Optional. File to write timing logs.
-#'   Can also be set globally via `options(pipetime.log_file = "filename.log")`.
-#'   Defaults to NULL (no logging).
-#' @param console Logical. Print messages to the console? Can also be set globally via
-#'   `options(pipetime.console = TRUE)`. Defaults to TRUE.
-#' @param time_unit Character. Unit of time: "secs", "millisecs", "mins", or "hours".
-#'   Can also be set globally via `options(pipetime.time_unit = "secs")`. Defaults to "secs".
+#' @param log_file Optional. File to write timing logs. Defaults to NULL (no logging).
+#' @param console Logical. Print messages to the console? Defaults to TRUE.
+#' @param time_unit Character. Unit of time. Must be one of "secs", "mins", "hours", "days", or "weeks".
+#' Passed directly to [base::difftime()]. Defaults to "secs".
 #'
 #' @return The input object, unchanged. Timing messages are printed or logged separately.
 #'
@@ -27,18 +24,11 @@
 #'
 time_pipe <- function(.data,
                       label = NULL,
-                      log_file = NULL,
-                      console = NULL,
-                      time_unit = NULL) {
-  # Use global options if arguments are NULL/missing
-  if (is.null(log_file))
-    log_file <- getOption("pipetime.log_file", NULL)
-  if (is.null(console))
-    console <- getOption("pipetime.console", TRUE)
-  if (is.null(time_unit))
-    time_unit <- getOption("pipetime.time_unit", "secs")
+                      log_file = getOption("pipetime.log_file", NULL),
+                      console = getOption("pipetime.console", TRUE),
+                      time_unit = getOption("pipetime.time_unit", "secs")) {
 
-  time_unit <- match.arg(time_unit, choices = c("secs", "millisecs", "mins", "hours"))
+  time_unit <- match.arg(time_unit, choices = c("secs", "mins", "hours", "days", "weeks"))
 
   start <- Sys.time()
   result <- .data

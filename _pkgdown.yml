@@ -3,4 +3,7 @@ home:
   logo: "man/figures/logo.png"
   source: README.Rmd
 
+template:
+  bootstrap: 5
 
+url: "https://github.com/CyGei/pipetime"

@@ -9,11 +9,10 @@ Description: Enable users to measure and record the execution time of pipe opera
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Imports: crayon
 Suggests: 
     testthat (>= 3.0.0),
+    crayon,
     dplyr,
-    microbenchmark,
     tictoc,
     knitr,
     rmarkdown

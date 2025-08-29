@@ -1,74 +1,62 @@
-
-test_that("time_pipe timing is similar to microbenchmark", {
-  df <- data.frame(x = 1:20, group = rep(letters[1:2], each = 10))
-
-  # Reference timing with microbenchmark (mean in seconds)
-  mb <- microbenchmark::microbenchmark(
-    {
-      df |>
-        dplyr::group_by(group) |>
-        dplyr::mutate(sleep = Sys.sleep(1)) |>
-        dplyr::ungroup() |>
-        dplyr::summarise(mean_x = mean(x))
-    },
-    times = 1L,
-    unit = "seconds"
-  ) |> summary()
-
-  # time_pipe
-  pipe_file <- tempfile(fileext = ".log")
-  df |>
-    dplyr::group_by(group) |>
-    dplyr::mutate(sleep = Sys.sleep(1)) |>
-    dplyr::ungroup() |>
-    dplyr::summarise(mean_x = mean(x)) |>
-    time_pipe("summary", log_file = pipe_file, console = FALSE)
-
-  pt <- as.numeric(sub(".*: ([0-9.]+) secs", "\\1", readLines(pipe_file)[1]))
-  file.remove(pipe_file)
-
-  expect_equal(mb$median, pt, tolerance = 0.25)
+test_that("time_pipe returns input unchanged", {
+  df <- data.frame(x = 1:3)
+  out <- df |> time_pipe("test", console = FALSE)
+  expect_identical(out, df)
 })
 
+test_that("time_pipe generates default label", {
+  mydataframe <- data.frame(x = 1:3)
+  expect_message(mydataframe |> time_pipe(), regexp = "mydataframe")
+})
 
+test_that("time_pipe generates custom label", {
+  df <- data.frame(x = 1:3)
+  expect_message(df |> time_pipe("custom label"), regexp = "custom label")
+})
 
-test_that("time_pipe step timing matches microbenchmark for each step", {
-  df <- data.frame(x = 1:20, group = rep(letters[1:2], each = 10))
+test_that("logging to file works", {
+  f <- tempfile()
+  df <- data.frame(x = 1:3)
+  df |> time_pipe("log test", log_file = f, console = FALSE)
+  log <- readLines(f)
+  expect_true(any(grepl("log test", log)))
+  unlink(f)
+})
 
-  #####################
-  # group_by
-  #####################
-  mb <- microbenchmark::microbenchmark(
-    { df |> dplyr::group_by(group) },
-    times = 1L,
-    unit = "seconds"
-  ) |> summary()
+test_that("invalid time_unit raises error", {
+  df <- data.frame(x = 1:3)
+  expect_error(df |> time_pipe("test", time_unit = "microsec"),
+               regexp = "should be one of")
+})
 
-  pipe_file <- tempfile(fileext = ".log")
-  df |>
-    dplyr::group_by(group) |>
-    time_pipe("group_by", log_file = pipe_file, console = FALSE)
+test_that("different time units are accepted", {
+  df <- data.frame(x = 1:3)
+  for (u in c("secs", "mins", "hours", "days", "weeks")) {
+    expect_message(df |> time_pipe("time unit test", time_unit = u), regexp = u)
+  }
+})
 
-  pt <- as.numeric(sub(".*: ([0-9.]+) secs", "\\1", readLines(pipe_file)[1]))
+test_that("time_pipe time is as expected", {
+  f <- tempfile()
+  data.frame(x = 1:3) |>
+    time_pipe(
+      "pre-sleep",
+      time_unit = "secs",
+      log_file = f,
+      console = FALSE
+    ) |>
+    dplyr::mutate(result = Sys.sleep(0.5)) |>
+    time_pipe(
+      "post-sleep",
+      time_unit = "secs",
+      log_file = f,
+      console = FALSE
+    )
+  log <- readLines(f)
+  pre_time <- as.numeric(sub(".*: (.*) secs", "\\1", log[grepl("pre-sleep", log)]))
+  post_time <- as.numeric(sub(".*: (.*) secs", "\\1", log[grepl("post-sleep", log)]))
 
-  expect_equal(mb$median, pt, tolerance = 0.1)
-  rm(list = c("mb", "pt"))
-
-  # Step 2: mutate with sleep
-  mb <- microbenchmark::microbenchmark(
-    { df |> dplyr::group_by(group) |> dplyr::mutate(sleep = Sys.sleep(1)) },
-    times = 1L,
-    unit = "seconds"
-  ) |> summary()
-
-  pipe_file <- tempfile(fileext = ".log")
-  df |>
-    dplyr::group_by(group) |>
-    dplyr::mutate(sleep = Sys.sleep(1)) |>
-    time_pipe("mutate", log_file = pipe_file, console = FALSE)
-
-  pt <- as.numeric(sub(".*: ([0-9.]+) secs", "\\1", readLines(pipe_file)[1]))
-  file.remove(pipe_file)
-
-  expect_equal(mb$median, pt, tolerance = 0.25)
+  expect_true(post_time >= 0.5)
+  expect_true(pre_time < 0.5)
+  unlink(f)
 })

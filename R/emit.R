@@ -10,37 +10,45 @@
 #' @param log_file Character; path to a file to append the message.
 #'
 #' @return Invisibly returns the duration of the operation.
-#' @importFrom crayon blue green
 #' @keywords internal
-emit <- function(start, end, label, time_unit, console, log_file) {
-
+#' @noRd
+emit <- function(start,
+                 end,
+                 label,
+                 time_unit,
+                 console,
+                 log_file) {
   duration <- as.numeric(difftime(end, start, units = time_unit))
-  duration <- format(round(duration, 4), nsmall = 4)
+  duration <- sprintf("%.4f", duration)
   timestamp <- format(start, "%Y-%m-%d %H:%M:%OS3")
 
   build_msg <- function(timestamp, label, duration, time_unit) {
     paste0("[", timestamp, "] ", label, ": ", duration, " ", time_unit)
   }
 
-  if (console) {
-    console_msg <- build_msg(
-      timestamp,
-      crayon::blue(label),
-      crayon::green(duration),
-      crayon::green(time_unit)
-    )
+  # Console message
+  if (isTRUE(console)) {
+    if (requireNamespace("crayon", quietly = TRUE)) {
+      console_msg <- build_msg(
+        timestamp,
+        crayon::blue(label),
+        crayon::green(duration),
+        crayon::green(time_unit)
+      )
+    } else {
+      console_msg <- build_msg(timestamp, label, duration, time_unit)
+    }
     message(console_msg)
   }
 
+  # Log file message
   if (!is.null(log_file)) {
-    log_msg <- build_msg(
-      timestamp,
-      label,
-      duration,
-      time_unit
+    log_msg <- build_msg(timestamp, label, duration, time_unit)
+    tryCatch(
+      write(log_msg, file = log_file, append = TRUE),
+      error = function(e)
+        warning("Could not write to log file: ", log_file)
     )
-
-    cat(log_msg, "\n", file = log_file, append = TRUE)
   }
 
   invisible(duration)

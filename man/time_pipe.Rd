@@ -7,9 +7,9 @@
 time_pipe(
   .data,
   label = NULL,
-  log_file = NULL,
-  console = NULL,
-  time_unit = NULL
+  log_file = getOption("pipetime.log_file", NULL),
+  console = getOption("pipetime.console", TRUE),
+  time_unit = getOption("pipetime.time_unit", "secs")
 )
 }
 \arguments{
@@ -17,15 +17,12 @@ time_pipe(
 
 \item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
 
-\item{log_file}{Optional. File to write timing logs.
-Can also be set globally via \code{options(pipetime.log_file = "filename.log")}.
-Defaults to NULL (no logging).}
+\item{log_file}{Optional. File to write timing logs. Defaults to NULL (no logging).}
 
-\item{console}{Logical. Print messages to the console? Can also be set globally via
-\code{options(pipetime.console = TRUE)}. Defaults to TRUE.}
+\item{console}{Logical. Print messages to the console? Defaults to TRUE.}
 
-\item{time_unit}{Character. Unit of time: "secs", "millisecs", "mins", or "hours".
-Can also be set globally via \code{options(pipetime.time_unit = "secs")}. Defaults to "secs".}
+\item{time_unit}{Character. Unit of time. Must be one of "secs", "mins", "hours", "days", or "weeks".
+Passed directly to \code{\link[base:difftime]{base::difftime()}}. Defaults to "secs".}
 }
 \value{
 The input object, unchanged. Timing messages are printed or logged separately.
