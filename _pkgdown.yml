@@ -6,4 +6,7 @@ home:
 template:
   bootstrap: 5
 
-url: "https://github.com/CyGei/pipetime"
+repo:
+  url:
+    home: https://github.com/CyGei/pipetime
+    user: https://github.com/CyGei

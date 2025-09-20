@@ -47,19 +47,34 @@ complex_fn <- function(duration,x) {
 }
 
 data.frame(x = 1:5) |> 
-  dplyr::mutate(y = complex_fn(0.5, x)) |>
+  mutate(y = complex_fn(0.5, x)) |>
   time_pipe("compute y") |> 
-  dplyr::mutate(z = complex_fn(0.5, y)) |> 
+  mutate(z = complex_fn(0.5, y)) |> 
   time_pipe("compute z") |>
-  dplyr::summarise(mean_z = mean(z)) |>
+  summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline")
     
 ```
 
 -   Each `time_pipe()` reports the cumulative time since the start of the pipeline.
 
-# Logging to a File
+# Logging to a dataframe
+You can save timing logs to a dataframe using the `df` argument. Provide `df` as a character string naming the dataframe. Each time `time_pipe()` is called, the dataframe in your `.GlobalEnv` will be created (if needed) and updated with a new row.
+```{r}
+df_1 <- data.frame(x = 1:5) |> 
+  mutate(y = complex_fn(0.5, x)) |>
+  time_pipe("compute y", df = "log_df")
 
+df_2 <- df_1 |> 
+  mutate(z = complex_fn(0.5, y)) |>
+  time_pipe("compute z", df = "log_df")
+
+log_df
+```
+
+Alternatively, you can set a global default for the session using `options()`: `options(pipetime.df = "log_df")`. Then you can omit the `df` argument in `time_pipe()` calls.
+
+# Logging to a file
 You can save timing logs to a file using the `log_file` argument. 
 For simplicity, you can set a global default for the session using `options()`:
 
@@ -69,22 +84,22 @@ log <- tempfile(fileext = ".log")
 options(pipetime.log_file = log)
 
 df <- data.frame(x = 1:5) |> 
-  dplyr::mutate(y = complex_fn(0.1, x)) |>
+  mutate(y = complex_fn(0.1, x)) |>
   time_pipe("compute y", console = FALSE) |> 
-  dplyr::mutate(z = complex_fn(0.1, y)) |>
+  mutate(z = complex_fn(0.1, y)) |>
   time_pipe("compute z", console = FALSE) |>
-  dplyr::summarise(mean_z = mean(z)) |>
+  summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline", console = FALSE)
 ```
 
 ```{r, echo=TRUE, eval=FALSE}
 options(pipetime.log_file = "pipetime.log")
 df <- data.frame(x = 1:5) |> 
-  dplyr::mutate(y = complex_fn(0.1, x)) |>
+  mutate(y = complex_fn(0.1, x)) |>
   time_pipe("compute y",console = FALSE ) |> 
-  dplyr::mutate(z = complex_fn(0.1, y)) |> 
+  mutate(z = complex_fn(0.1, y)) |> 
   time_pipe("compute z",console = FALSE) |>
-  dplyr::summarise(mean_z = mean(z)) |>
+  summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline",console = FALSE)
 ```
 All timing messages will then be logged to `pipetime.log` in the working directory.

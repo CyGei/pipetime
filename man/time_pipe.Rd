@@ -7,17 +7,20 @@
 time_pipe(
   .data,
   label = NULL,
+  df = getOption("pipetime.df", NULL),
   log_file = getOption("pipetime.log_file", NULL),
   console = getOption("pipetime.console", TRUE),
   time_unit = getOption("pipetime.time_unit", "secs")
 )
 }
 \arguments{
-\item{.data}{The input object to pass through the pipeline.}
+\item{.data}{The input object passed through the pipeline.}
 
 \item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
 
-\item{log_file}{Optional. File to write timing logs. Defaults to NULL (no logging).}
+\item{df}{Optional. Name of a data frame in which to store timing results. Defaults to NULL (no storage).}
+
+\item{log_file}{Optional. File path to append timing logs. Defaults to NULL (no logging).}
 
 \item{console}{Logical. Print messages to the console? Defaults to TRUE.}
 
@@ -25,11 +28,15 @@ time_pipe(
 Passed directly to \code{\link[base:difftime]{base::difftime()}}. Defaults to "secs".}
 }
 \value{
-The input object, unchanged. Timing messages are printed or logged separately.
+The input object, unchanged. Timing is printed, logged, or stored separately.
 }
 \description{
-Record the runtime of a pipeline (|>) operation. Can print to the console
-or log to a file. Arguments can also be set globally via options().
+Records the runtime of a pipeline (|>) operation.
+Can print the timing to the console, log it to a file, and/or save results
+into a data frame for later use. Arguments can also be set globally via options().
+}
+\details{
+\code{time_pipe()} measures the elapsed time of the operation from the start of the pipeline to the point where \code{time_pipe()} is called.
 }
 \examples{
 library(dplyr)

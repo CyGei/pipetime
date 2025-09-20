@@ -17,7 +17,8 @@ Suggests:
     knitr,
     rmarkdown
 Config/testthat/edition: 3
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Roxygen: list(markdown = TRUE)
-URL: https://cygei.github.io/pipetime/
+URL: https://cygei.github.io/pipetime/; https://github.com/CyGei/pipetime
+BugReports: https://github.com/CyGei/pipetime/issues
 VignetteBuilder: knitr
