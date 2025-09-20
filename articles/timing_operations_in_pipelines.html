@@ -46,6 +46,7 @@
 <li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/CyGei/pipetime" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul>
 </div>
 
@@ -68,7 +69,7 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cygei.github.io/pipetime/" class="external-link">pipetime</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cygei.github.io/pipetime/;" class="external-link">pipetime</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
@@ -99,7 +100,7 @@ naturally with pipelines and tidy workflows.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="va">the_time</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.008   0.000   0.109</span></span>
+<span><span class="co">#&gt;   0.008   0.000   0.108</span></span>
 <span><span class="va">df</span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
@@ -117,7 +118,7 @@ naturally with pipelines and tidy workflows.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; total pipeline: 0.106 sec elapsed</span></span>
+<span><span class="co">#&gt; total pipeline: 0.105 sec elapsed</span></span>
 <span><span class="va">df</span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
@@ -133,8 +134,8 @@ naturally with pipelines and tidy workflows.</p>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"after mutate"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-08-29 12:12:03.746] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">0.1016</span> <span style="color: #00BB00;">secs</span></span></span>
-<span><span class="co">#&gt; [2025-08-29 12:12:03.746] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">0.1076</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2025-09-20 20:03:40.528] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">0.1012</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2025-09-20 20:03:40.528] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">0.1067</span> <span style="color: #00BB00;">secs</span></span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
 </div>

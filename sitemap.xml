@@ -1,12 +1,12 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>https://github.com/CyGei/pipetime/404.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/LICENSE-text.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/LICENSE.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/articles/index.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/articles/timing_operations_in_pipelines.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/authors.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/index.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/reference/index.html</loc></url>
-<url><loc>https://github.com/CyGei/pipetime/reference/time_pipe.html</loc></url>
+<url><loc>/404.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/LICENSE.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/timing_operations_in_pipelines.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/time_pipe.html</loc></url>
 </urlset>
 
