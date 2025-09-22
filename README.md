@@ -7,9 +7,9 @@
 [![CodeFactor](https://www.codefactor.io/repository/github/cygei/pipetime/badge)](https://www.codefactor.io/repository/github/cygei/pipetime)
 <!-- badges: end -->
 
-`pipetime` measures the runtime of your pipeline operations. It works
-with the native R pipe (`|>`) and fits naturally into ‘*tidy
-workflows*’.
+`pipetime` measures the runtime of a pipeline from its start up to the
+`time_pipe()` call. It works with the native R pipe (`|>`) and
+integrates seamlessly into ‘*tidy workflows*’.
 
 # Installation
 
@@ -21,23 +21,21 @@ library(dplyr)
 
 # Example
 
-Place `time_pipe()` at any point in a pipeline to measure elapsed time
-**from the start** up to that point:
+Place `time_pipe()` anywhere in a pipeline to measure elapsed time from
+the start up to that point.
 
 ``` r
 data.frame(x = 1:3) |>
   mutate(sleep = Sys.sleep(0.1)) |> # e.g. a complex operation
   summarise(mean_x = mean(x)) |>
   time_pipe("total pipeline") # ~0.1 sec
-#> [2025-09-20 15:57:03.973] total pipeline: 0.1092 secs
+#> [2025-09-22 14:30:18.343] total pipeline: 0.1094 secs
 #>   mean_x
 #> 1      2
 ```
 
-- The timing includes all operations before `time_pipe()`.
-
-- You can insert multiple `time_pipe()` calls to add **checkpoints**
-  along the pipeline:
+Insert multiple `time_pipe()` calls to add *timestamps* along the
+pipeline:
 
 ``` r
 complex_fn <- function(duration,x) {
@@ -52,68 +50,38 @@ data.frame(x = 1:5) |>
   time_pipe("compute z") |>
   summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline")
-#> [2025-09-20 15:57:04.090] compute y: 0.5069 secs
-#> [2025-09-20 15:57:04.090] compute z: 1.0118 secs
-#> [2025-09-20 15:57:04.090] total pipeline: 1.0142 secs
+#> [2025-09-22 14:30:18.462] compute y: 0.5066 secs
+#> [2025-09-22 14:30:18.462] compute z: 1.0120 secs
+#> [2025-09-22 14:30:18.462] total pipeline: 1.0171 secs
 #>     mean_z
-#> 1 3.134429
+#> 1 3.117084
 ```
 
-- Each `time_pipe()` reports the cumulative time since the start of the
-  pipeline.
+Each `time_pipe()` reports the cumulative time since the start of the
+pipeline.
 
 # Logging to a dataframe
 
-You can save timing logs to a dataframe using the `df` argument. Provide
-`df` as a character string naming the dataframe. Each time `time_pipe()`
-is called, the dataframe in your `.GlobalEnv` will be created (if
-needed) and updated with a new row.
+Save timings to a dataframe in the package’s private environment
+(`.pipetime_env`) with the `log` argument:
 
 ``` r
 df_1 <- data.frame(x = 1:5) |> 
   mutate(y = complex_fn(0.5, x)) |>
-  time_pipe("compute y", df = "log_df")
-#> [2025-09-20 15:57:05.113] compute y: 0.5072 secs
+  time_pipe("compute y", log = "timings")
+#> [2025-09-22 14:30:19.494] compute y: 0.5073 secs
 
 df_2 <- df_1 |> 
   mutate(z = complex_fn(0.5, y)) |>
-  time_pipe("compute z", df = "log_df")
-#> [2025-09-20 15:57:05.625] compute z: 0.5064 secs
+  time_pipe("compute z", log = "timings")
+#> [2025-09-22 14:30:20.005] compute z: 0.5077 secs
 
-log_df
-#>                 timestamp     label duration time_unit
-#> 1 2025-09-20 15:57:05.113 compute y   0.5072      secs
-#> 2 2025-09-20 15:57:05.625 compute z   0.5064      secs
+get_log("timings")
+#>                 timestamp     label duration unit
+#> 1 2025-09-22 14:30:19.494 compute y   0.5073 secs
+#> 2 2025-09-22 14:30:20.005 compute z   0.5077 secs
+rm_log("timings") # delete "timings" from .pipetime_env
 ```
 
-Alternatively, you can set a global default for the session using
-`options()`: `options(pipetime.df = "log_df")`. Then you can omit the
-`df` argument in `time_pipe()` calls.
-
-# Logging to a file
-
-You can save timing logs to a file using the `log_file` argument. For
-simplicity, you can set a global default for the session using
-`options()`:
-
-``` r
-options(pipetime.log_file = "pipetime.log")
-df <- data.frame(x = 1:5) |> 
-  mutate(y = complex_fn(0.1, x)) |>
-  time_pipe("compute y",console = FALSE ) |> 
-  mutate(z = complex_fn(0.1, y)) |> 
-  time_pipe("compute z",console = FALSE) |>
-  summarise(mean_z = mean(z)) |>
-  time_pipe("total pipeline",console = FALSE)
-```
-
-All timing messages will then be logged to `pipetime.log` in the working
-directory.
-
-``` r
-readLines("pipetime.log")
-```
-
-    #> [1] "[2025-09-20 15:57:06.148] compute y: 0.1073 secs"     
-    #> [2] "[2025-09-20 15:57:06.148] compute z: 0.2165 secs"     
-    #> [3] "[2025-09-20 15:57:06.148] total pipeline: 0.2199 secs"
+Set a global default for the session using:
+`options(pipetime.log = "timings")`.

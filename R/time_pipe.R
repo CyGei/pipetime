@@ -1,21 +1,19 @@
 #' Measure execution time in a pipeline
 #'
-#' Records the runtime of a pipeline (|>) operation.
-#' Can print the timing to the console, log it to a file, and/or save results
-#' into a data frame for later use. Arguments can also be set globally via options().
+#' Records the runtime of pipeline (|>) operation.
+#' Can print the timing to the console and optionally log it to a data frame in `.pipetime_env`.
+#' Defaults can be set via `options()`.
 #'
-#' @param .data The input object passed through the pipeline.
+#' @param .data Input object passed through the pipeline.
 #' @param label Optional. Name for the operation. Defaults to the expression if not provided.
-#' @param df Optional. Name of a data frame in which to store timing results. Defaults to NULL (no storage).
-#' @param log_file Optional. File path to append timing logs. Defaults to NULL (no logging).
-#' @param console Logical. Print messages to the console? Defaults to TRUE.
-#' @param time_unit Character. Unit of time. Must be one of "secs", "mins", "hours", "days", or "weeks".
-#' Passed directly to [base::difftime()]. Defaults to "secs".
+#' @param log Character or NULL. Name of a data frame to store logs in `.pipetime_env`. Defaults to NULL (no storage).
+#' @param console Logical. Print timing to the console? Defaults to TRUE.
+#' @param unit Character. Time unit passed to [base::difftime()]. One of `"secs"`, `"mins"`, `"hours"`, `"days"`, or `"weeks"`. Defaults to `"secs"`.
 #'
-#' @return The input object, unchanged. Timing is printed, logged, or stored separately.
+#' @return The input object, unchanged. Timing information is printed or stored separately.
 #'
 #' @details
-#' `time_pipe()` measures the elapsed time of the operation from the start of the pipeline to the point where `time_pipe()` is called.
+#' `time_pipe()` measures the elapsed time of the pipeline from its start to the point where `time_pipe()` is called.
 #'
 #' @examples
 #' library(dplyr)
@@ -30,13 +28,12 @@
 time_pipe <- function(
   .data,
   label = NULL,
-  df = getOption("pipetime.df", NULL),
-  log_file = getOption("pipetime.log_file", NULL),
+  log = getOption("pipetime.log", NULL),
   console = getOption("pipetime.console", TRUE),
-  time_unit = getOption("pipetime.time_unit", "secs")
+  unit = getOption("pipetime.unit", "secs")
 ) {
-  time_unit <- match.arg(
-    time_unit,
+  unit <- match.arg(
+    unit,
     choices = c("secs", "mins", "hours", "days", "weeks")
   )
 
@@ -49,7 +46,7 @@ time_pipe <- function(
     label <- gsub("\\s+", "", paste(deparse(expr), collapse = ""))
   }
 
-  emit(start, end, label, time_unit, console, log_file, df)
+  emit(start, end, label, unit, console, log)
 
   result
 }

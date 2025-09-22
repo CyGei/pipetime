@@ -7,36 +7,32 @@
 time_pipe(
   .data,
   label = NULL,
-  df = getOption("pipetime.df", NULL),
-  log_file = getOption("pipetime.log_file", NULL),
+  log = getOption("pipetime.log", NULL),
   console = getOption("pipetime.console", TRUE),
-  time_unit = getOption("pipetime.time_unit", "secs")
+  unit = getOption("pipetime.unit", "secs")
 )
 }
 \arguments{
-\item{.data}{The input object passed through the pipeline.}
+\item{.data}{Input object passed through the pipeline.}
 
 \item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
 
-\item{df}{Optional. Name of a data frame in which to store timing results. Defaults to NULL (no storage).}
+\item{log}{Character or NULL. Name of a data frame to store logs in \code{.pipetime_env}. Defaults to NULL (no storage).}
 
-\item{log_file}{Optional. File path to append timing logs. Defaults to NULL (no logging).}
+\item{console}{Logical. Print timing to the console? Defaults to TRUE.}
 
-\item{console}{Logical. Print messages to the console? Defaults to TRUE.}
-
-\item{time_unit}{Character. Unit of time. Must be one of "secs", "mins", "hours", "days", or "weeks".
-Passed directly to \code{\link[base:difftime]{base::difftime()}}. Defaults to "secs".}
+\item{unit}{Character. Time unit passed to \code{\link[base:difftime]{base::difftime()}}. One of \code{"secs"}, \code{"mins"}, \code{"hours"}, \code{"days"}, or \code{"weeks"}. Defaults to \code{"secs"}.}
 }
 \value{
-The input object, unchanged. Timing is printed, logged, or stored separately.
+The input object, unchanged. Timing information is printed or stored separately.
 }
 \description{
-Records the runtime of a pipeline (|>) operation.
-Can print the timing to the console, log it to a file, and/or save results
-into a data frame for later use. Arguments can also be set globally via options().
+Records the runtime of pipeline (|>) operation.
+Can print the timing to the console and optionally log it to a data frame in \code{.pipetime_env}.
+Defaults can be set via \code{options()}.
 }
 \details{
-\code{time_pipe()} measures the elapsed time of the operation from the start of the pipeline to the point where \code{time_pipe()} is called.
+\code{time_pipe()} measures the elapsed time of the pipeline from its start to the point where \code{time_pipe()} is called.
 }
 \examples{
 library(dplyr)
