@@ -92,7 +92,7 @@ naturally with pipelines and tidy workflows.</p>
 <code>system.time()</code><a class="anchor" aria-label="anchor" href="#system-time"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Must wrap entire pipeline, breaking the flow</span></span>
+<code class="sourceCode R"><span><span class="co"># Must wrap entire pipeline to record the time, breaking the flow</span></span>
 <span><span class="va">the_time</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -100,10 +100,17 @@ naturally with pipelines and tidy workflows.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="va">the_time</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.008   0.000   0.108</span></span>
+<span><span class="co">#&gt;   0.009   0.000   0.109</span></span>
 <span><span class="va">df</span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
-<span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 4.666667</span></span>
+<span></span>
+<span><span class="co"># Doesn't return the result of the pipeline, so will give an error</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu">system_time</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Error in system_time(mutate(data.frame(x = 1:3), y = complex_fn(x))): could not find function "system_time"</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="tictoc">
@@ -134,8 +141,8 @@ naturally with pipelines and tidy workflows.</p>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"after mutate"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-09-20 20:03:40.528] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">0.1012</span> <span style="color: #00BB00;">secs</span></span></span>
-<span><span class="co">#&gt; [2025-09-20 20:03:40.528] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">0.1067</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2025-09-22 18:36:04.571] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">0.1017</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2025-09-22 18:36:04.571] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">0.1081</span> <span style="color: #00BB00;">secs</span></span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
 </div>
@@ -145,8 +152,8 @@ naturally with pipelines and tidy workflows.</p>
 </h2>
 <ul>
 <li><p>Works directly inside pipelines.</p></li>
-<li><p>Supports multiple timing checkpoints.</p></li>
-<li><p>Prints cumulative time without breaking the pipeline.</p></li>
+<li><p>Supports multiple calls within the pipeline.</p></li>
+<li><p>Records timing operations in <code>.pipetime_env</code>.</p></li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
