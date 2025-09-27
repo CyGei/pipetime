@@ -32,15 +32,15 @@ time_pipe <- function(
   console = getOption("pipetime.console", TRUE),
   unit = getOption("pipetime.unit", "secs")
 ) {
-  # --- Pipeline fingerprint ---
-  call_hash <- digest::digest(sys.calls()[[1]])
-
-  if (!identical(.pipetime_env$last_hash, call_hash)) {
+  # --- New run detection ---
+  if (!.pipetime_env$active_run) {
     .pipetime_env$pipe_counter <- .pipetime_env$pipe_counter + 1L
-    .pipetime_env$last_hash <- call_hash
+    .pipetime_env$active_run <- TRUE
+    # Reset active_run at the end of the top-level evaluation
+    on.exit(.pipetime_env$active_run <- FALSE, add = TRUE)
   }
   pipe_id <- .pipetime_env$pipe_counter
-  # ----------------------------
+  # --------------------------
 
   unit <- match.arg(unit, c("secs", "mins", "hours", "days", "weeks"))
 

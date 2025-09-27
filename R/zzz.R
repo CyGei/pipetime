@@ -3,5 +3,5 @@
 # Global counter for pipeline IDs
 .pipetime_env$pipe_counter <- 0L
 
-# Store last pipeline hash
-.pipetime_env$last_hash <- NULL
+# Track whether we’re already inside a pipeline run
+.pipetime_env$active_run <- FALSE
