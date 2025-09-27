@@ -32,10 +32,17 @@ time_pipe <- function(
   console = getOption("pipetime.console", TRUE),
   unit = getOption("pipetime.unit", "secs")
 ) {
-  unit <- match.arg(
-    unit,
-    choices = c("secs", "mins", "hours", "days", "weeks")
-  )
+  # --- Pipeline fingerprint ---
+  call_hash <- digest::digest(sys.calls()[[1]])
+
+  if (!identical(.pipetime_env$last_hash, call_hash)) {
+    .pipetime_env$pipe_counter <- .pipetime_env$pipe_counter + 1L
+    .pipetime_env$last_hash <- call_hash
+  }
+  pipe_id <- .pipetime_env$pipe_counter
+  # ----------------------------
+
+  unit <- match.arg(unit, c("secs", "mins", "hours", "days", "weeks"))
 
   start <- Sys.time()
   result <- .data
@@ -46,7 +53,7 @@ time_pipe <- function(
     label <- gsub("\\s+", "", paste(deparse(expr), collapse = ""))
   }
 
-  emit(start, end, label, unit, console, log)
+  emit(start, end, label, unit, console, log, pipe_id)
 
   result
 }
