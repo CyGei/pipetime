@@ -32,18 +32,24 @@ time_pipe <- function(
   console = getOption("pipetime.console", TRUE),
   unit = getOption("pipetime.unit", "secs")
 ) {
-  # --- New run detection ---
-  if (!.pipetime_env$active_run) {
-    .pipetime_env$pipe_counter <- .pipetime_env$pipe_counter + 1L
-    .pipetime_env$active_run <- TRUE
-    # Reset active_run at the end of the top-level evaluation
-    on.exit(.pipetime_env$active_run <- FALSE, add = TRUE)
+  if (!is.null(log)) {
+    # --- Per-log run detection ---
+    if (
+      is.null(.pipetime_env$active_runs[[log]]) ||
+        !.pipetime_env$active_runs[[log]]
+    ) {
+      pipe_id <- next_pipe_id(log)
+      .pipetime_env$active_runs[[log]] <- TRUE
+      on.exit(.pipetime_env$active_runs[[log]] <- FALSE, add = TRUE)
+    } else {
+      pipe_id <- .pipetime_env$pipe_counters[[log]]
+    }
+    # -----------------------------
+  } else {
+    pipe_id <- NULL
   }
-  pipe_id <- .pipetime_env$pipe_counter
-  # --------------------------
 
   unit <- match.arg(unit, c("secs", "mins", "hours", "days", "weeks"))
-
   start <- Sys.time()
   result <- .data
   end <- Sys.time()
@@ -56,4 +62,15 @@ time_pipe <- function(
   emit(start, end, label, unit, console, log, pipe_id)
 
   result
+}
+
+# Helper: get next pipe_id for a given log
+next_pipe_id <- function(log) {
+  if (is.null(.pipetime_env$pipe_counters[[log]])) {
+    .pipetime_env$pipe_counters[[log]] <- 1L
+  } else {
+    .pipetime_env$pipe_counters[[log]] <- .pipetime_env$pipe_counters[[log]] +
+      1L
+  }
+  .pipetime_env$pipe_counters[[log]]
 }

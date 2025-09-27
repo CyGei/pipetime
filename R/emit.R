@@ -14,31 +14,28 @@
 #' @keywords internal
 #' @noRd
 emit <- function(start, end, label, unit, console, log, pipe_id) {
-  # Added pipe_id
   duration <- as.numeric(difftime(end, start, units = unit))
-  duration <- sprintf("%.4f", duration)
-  timestamp <- format(start, "%Y-%m-%d %H:%M:%OS3")
+  duration_fmt <- sprintf("%.4f", duration)
+  timestamp <- format(end, "%Y-%m-%d %H:%M:%OS3")
 
-  build_msg <- function(timestamp, label, duration, unit) {
-    paste0("[", timestamp, "] ", label, ": ", duration, " ", unit)
+  build_msg <- function(ts, lbl, dur, unit) {
+    paste0("[", ts, "] ", lbl, ": ", dur, " ", unit)
   }
 
-  # Console message
   if (isTRUE(console)) {
     if (requireNamespace("crayon", quietly = TRUE)) {
       console_msg <- build_msg(
         timestamp,
         crayon::blue(label),
-        crayon::green(duration),
+        crayon::green(duration_fmt),
         crayon::green(unit)
       )
     } else {
-      console_msg <- build_msg(timestamp, label, duration, unit)
+      console_msg <- build_msg(timestamp, label, duration_fmt, unit)
     }
     message(console_msg)
   }
 
-  # Log to .pipetime_env
   if (!is.null(log)) {
     if (!is.character(log)) {
       stop("'log' must be a character string.")

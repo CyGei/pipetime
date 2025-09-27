@@ -9,6 +9,8 @@ rm_log <- function(log) {
   }
   if (exists(log, envir = .pipetime_env, inherits = FALSE)) {
     rm(list = log, envir = .pipetime_env)
+    .pipetime_env$pipe_counters[[log]] <- NULL
+    .pipetime_env$active_runs[[log]] <- NULL
     invisible(TRUE)
   } else {
     warning("No data frame named '", log, "' found in pipetime environment.")
