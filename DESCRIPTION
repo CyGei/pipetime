@@ -5,7 +5,7 @@ Version: 0.0.1
 Authors@R: 
     person("Cyril", "Geismar", email = "c.geismar21@imperial.ac.uk", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-8486-5890"))
-Description: Enable users to measure and record the execution time of pipe operations (using |>) with optional logging to a file and output to the console.
+Description: Enable users to measure and record the execution time of pipe operations (using |>) with optional logging to dataframes and output to the console.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
