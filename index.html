@@ -41,7 +41,8 @@
 <li class="nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="articles/timing_operations_in_pipelines.html">Timing Operations in R Pipelines</a></li>
+<li><a class="dropdown-item" href="articles/timing_R_pipelines.html">Timing R Pipelines</a></li>
+    <li><a class="dropdown-item" href="articles/why_pipetime.html">Why pipetime?</a></li>
   </ul>
 </li>
       </ul>
@@ -64,11 +65,14 @@
 </div>
 <!-- badges: start -->
 
-<p><code>pipetime</code> measures the runtime of a pipeline from its start up to the <code><a href="reference/time_pipe.html">time_pipe()</a></code> call. It works with the native R pipe (<code>|&gt;</code>) and integrates seamlessly into ‘<em>tidy workflows</em>’.</p>
+<!-- badges: end -->
+<p>⏳ <code>pipetime</code> measures elapsed time in R pipelines.</p>
+<p>Insert <code><a href="reference/time_pipe.html">time_pipe()</a></code> anywhere in a pipeline to print or log the time since the pipeline started. It works with the native R pipe (<code>|&gt;</code>) and fits naturally into <a href="https://www.tidyverse.org/" class="external-link">tidyverse</a> workflows.</p>
 </div>
 <div class="section level1">
 <h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h1>
+<p>Install from GitHub and load alongside <code>dplyr</code> for examples:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># devtools::install_github("CyGei/pipetime")</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cygei.github.io/pipetime/;" class="external-link">pipetime</a></span><span class="op">)</span></span>
@@ -77,57 +81,73 @@
 <div class="section level1">
 <h1 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h1>
-<p>Place <code><a href="reference/time_pipe.html">time_pipe()</a></code> anywhere in a pipeline to measure elapsed time from the start up to that point.</p>
+<p>Place <code><a href="reference/time_pipe.html">time_pipe()</a></code> at the end of a pipeline to measure total elapsed time:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sleep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">0.1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="co"># e.g. a complex operation</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span> <span class="co"># ~0.1 sec</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:18.343] total pipeline: 0.1094 secs</span></span>
-<span><span class="co">#&gt;   mean_x</span></span>
-<span><span class="co">#&gt; 1      2</span></span></code></pre></div>
-<p>Insert multiple <code><a href="reference/time_pipe.html">time_pipe()</a></code> calls to add <em>timestamps</em> along the pipeline:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">complex_fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">duration</span>,<span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">duration</span><span class="op">)</span>  <span class="co"># Simulate a time-consuming operation</span></span>
+<code class="sourceCode R"><span><span class="va">slow_op</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">delay</span>, <span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="va">delay</span><span class="op">)</span>  <span class="co"># Simulate a time-consuming operation</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, mean <span class="op">=</span> <span class="va">x</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sleep <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span> <span class="co"># ~+0.1 sec</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:14.332] total pipeline: +0.1061 secs</span></span>
+<span><span class="co">#&gt;   mean_x</span></span>
+<span><span class="co">#&gt; 1      2</span></span></code></pre></div>
+<p>Use multiple <code><a href="reference/time_pipe.html">time_pipe()</a></code> calls to mark steps along a pipeline:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute y"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute z"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:18.462] compute y: 0.5066 secs</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:18.462] compute z: 1.0120 secs</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:18.462] total pipeline: 1.0171 secs</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:14.444] compute y: +0.5055 secs</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:14.444] compute z: +1.0114 secs</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:14.444] total pipeline: +1.0122 secs</span></span>
 <span><span class="co">#&gt;     mean_z</span></span>
-<span><span class="co">#&gt; 1 3.117084</span></span></code></pre></div>
-<p>Each <code><a href="reference/time_pipe.html">time_pipe()</a></code> reports the cumulative time since the start of the pipeline.</p>
+<span><span class="co">#&gt; 1 2.710958</span></span></code></pre></div>
+<p>⏱️ <strong>Each <code><a href="reference/time_pipe.html">time_pipe()</a></code> reports the cumulative time since the pipeline started.</strong></p>
 </div>
 <div class="section level1">
-<h1 id="logging-to-a-dataframe">Logging to a dataframe<a class="anchor" aria-label="anchor" href="#logging-to-a-dataframe"></a>
+<h1 id="logging">Logging<a class="anchor" aria-label="anchor" href="#logging"></a>
 </h1>
-<p>Save timings to a dataframe in the package’s private environment (<code>.pipetime_env</code>) with the <code>log</code> argument:</p>
+<p>📝 Use <code>log</code> to save timings to a hidden environment (<code>.pipetime_env</code>):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">df_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute y"</span>, log <span class="op">=</span> <span class="st">"timings"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:19.494] compute y: 0.5073 secs</span></span>
-<span></span>
-<span><span class="va">df_2</span> <span class="op">&lt;-</span> <span class="va">df_1</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="fu">complex_fn</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute y"</span>, log <span class="op">=</span> <span class="st">"timings"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute z"</span>, log <span class="op">=</span> <span class="st">"timings"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-09-22 14:30:20.005] compute z: 0.5077 secs</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:15.460] compute y: +0.5055 secs</span></span>
+<span><span class="co">#&gt; [2025-09-28 22:40:15.460] compute z: +1.0116 secs</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/get_log.html">get_log</a></span><span class="op">(</span><span class="st">"timings"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;                 timestamp     label duration unit</span></span>
-<span><span class="co">#&gt; 1 2025-09-22 14:30:19.494 compute y   0.5073 secs</span></span>
-<span><span class="co">#&gt; 2 2025-09-22 14:30:20.005 compute z   0.5077 secs</span></span>
-<span><span class="fu"><a href="reference/rm_log.html">rm_log</a></span><span class="op">(</span><span class="st">"timings"</span><span class="op">)</span> <span class="co"># delete "timings" from .pipetime_env</span></span></code></pre></div>
-<p>Set a global default for the session using: <code>options(pipetime.log = "timings")</code>.</p>
+<span><span class="co">#&gt;             timestamp     label  duration unit</span></span>
+<span><span class="co">#&gt; 1 2025-09-28 22:40:15 compute y 0.5054879 secs</span></span>
+<span><span class="co">#&gt; 2 2025-09-28 22:40:15 compute z 1.0115728 secs</span></span>
+<span><span class="fu"><a href="reference/rm_log.html">rm_log</a></span><span class="op">(</span><span class="st">"timings"</span><span class="op">)</span> <span class="co">#delete the dataframe in .pipetime_env</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="managing-logs">Managing logs<a class="anchor" aria-label="anchor" href="#managing-logs"></a>
+</h2>
+<ul>
+<li><p><code>get_log("name")</code> → return one log</p></li>
+<li><p><code>get_log(NULL)</code> → return all logs as a named list</p></li>
+<li><p><code>rm_log("name")</code> → remove one log</p></li>
+<li><p><code>rm_log(NULL, force = TRUE)</code> → remove all logs</p></li>
+</ul>
+</div>
+</div>
+<div class="section level1">
+<h1 id="options">Options<a class="anchor" aria-label="anchor" href="#options"></a>
+</h1>
+<p>You can also set <strong>session‑wide</strong> defaults:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>pipetime.log <span class="op">=</span> <span class="st">"timings"</span>,</span>
+<span>        pipetime.console <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>        pipetime.unit <span class="op">=</span> <span class="st">"secs"</span><span class="op">)</span></span></code></pre></div>
 </div>
 
   </main><aside class="col-md-3"><div class="links">
