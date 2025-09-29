@@ -2,16 +2,30 @@
 % Please edit documentation in R/get_log.R
 \name{get_log}
 \alias{get_log}
-\title{Retrieve a stored timing log}
+\title{Retrieve a timing log (or all logs)}
 \usage{
-get_log(log)
+get_log(log = NULL)
 }
 \arguments{
-\item{log}{Character. Name of the data frame to load from \code{.pipetime_env}.}
+\item{log}{Character string or \code{NULL}. Name of the log to retrieve. If \code{NULL}, all logs are returned.}
 }
 \value{
-A data frame of timing logs.
+Either:
+\itemize{
+\item A data frame with columns:
+\itemize{
+\item \code{timestamp} (\code{POSIXct}): Pipeline start time
+\item \code{label} (\code{character}): Operation label
+\item \code{duration} (\code{numeric}): Elapsed time since pipeline start
+\item \code{unit} (\code{character}): Time unit used
+}
+\item Or, if \code{log = NULL}, a named list of such data frames.
+}
 }
 \description{
-Retrieve a stored timing log
+Return a stored timing log from \code{.pipetime_env}.
+If \code{log = NULL}, return all logs as a named list.
+}
+\seealso{
+\code{\link[=rm_log]{rm_log()}}
 }

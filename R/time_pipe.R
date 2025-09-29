@@ -1,19 +1,26 @@
 #' Measure execution time in a pipeline
 #'
-#' Records the runtime of pipeline (|>) operation.
-#' Can print the timing to the console and optionally log it to a data frame in `.pipetime_env`.
-#' Defaults can be set via `options()`.
+#' Records the runtime of a pipeline (`|>`) from its start to the point where `time_pipe()` is called.
+#' Prints results to the console and/or logs them in `.pipetime_env`.
+#' Defaults can be set via `options(pipetime.*)`.
 #'
 #' @param .data Input object passed through the pipeline.
-#' @param label Optional. Name for the operation. Defaults to the expression if not provided.
-#' @param log Character or NULL. Name of a data frame to store logs in `.pipetime_env`. Defaults to NULL (no storage).
-#' @param console Logical. Print timing to the console? Defaults to TRUE.
-#' @param unit Character. Time unit passed to [base::difftime()]. One of `"secs"`, `"mins"`, `"hours"`, `"days"`, or `"weeks"`. Defaults to `"secs"`.
+#' @param label Character string. Operation name. Defaults to the expression if `NULL`.
+#' @param log Character string or `NULL`. Name of a log data frame in `.pipetime_env`. Default: `NULL`.
+#' @param console Logical. Print timing to console? Default: `TRUE`.
+#' @param unit Character string. Time unit for [base::difftime()]. One of `"secs"`, `"mins"`, `"hours"`, `"days"`, `"weeks"`. Default: `"secs"`.
 #'
-#' @return The input object, unchanged. Timing information is printed or stored separately.
+#' @return `.data`, unchanged. Timing information is printed and/or stored separately.
 #'
 #' @details
-#' `time_pipe()` measures the elapsed time of the pipeline from its start to the point where `time_pipe()` is called.
+#' `time_pipe()` measures elapsed time from pipeline start to the call.
+#' If `log` is set, results are appended to a data frame in `.pipetime_env` with columns:
+#' - `timestamp`: Pipeline start time (`POSIXct`)
+#' - `label`: Operation label
+#' - `duration`: Elapsed time since pipeline start (`numeric`)
+#' - `unit`: Time unit used
+#'
+#' Stored logs can be retrieved with [get_log()].
 #'
 #' @examples
 #' library(dplyr)
@@ -24,7 +31,6 @@
 #' time_pipe("total pipeline")
 #'
 #' @export
-#'
 time_pipe <- function(
   .data,
   label = NULL,
@@ -32,45 +38,30 @@ time_pipe <- function(
   console = getOption("pipetime.console", TRUE),
   unit = getOption("pipetime.unit", "secs")
 ) {
+  # Track pipeline start
   if (!is.null(log)) {
-    # --- Per-log run detection ---
-    if (
-      is.null(.pipetime_env$active_runs[[log]]) ||
-        !.pipetime_env$active_runs[[log]]
-    ) {
-      pipe_id <- next_pipe_id(log)
-      .pipetime_env$active_runs[[log]] <- TRUE
-      on.exit(.pipetime_env$active_runs[[log]] <- FALSE, add = TRUE)
-    } else {
-      pipe_id <- .pipetime_env$pipe_counters[[log]]
+    if (is.null(.pipetime_env$start_times[[log]])) {
+      .pipetime_env$start_times[[log]] <- Sys.time()
+      on.exit(.pipetime_env$start_times[[log]] <- NULL, add = TRUE)
     }
-    # -----------------------------
+    start_time <- .pipetime_env$start_times[[log]]
   } else {
-    pipe_id <- NULL
+    start_time <- Sys.time()
   }
 
-  unit <- match.arg(unit, c("secs", "mins", "hours", "days", "weeks"))
-  start <- Sys.time()
+  # Force evaluation and calculate duration
   result <- .data
-  end <- Sys.time()
+  end_time <- Sys.time()
+  duration <- as.numeric(difftime(end_time, start_time, units = unit))
 
+  # Generate label if not provided
   if (is.null(label)) {
-    expr <- substitute(.data)
-    label <- gsub("\\s+", "", paste(deparse(expr), collapse = ""))
+    label <- paste(deparse(substitute(.data)), collapse = "")
+    label <- gsub("\\s+", " ", trimws(label))
   }
 
-  emit(start, end, label, unit, console, log, pipe_id)
+  # Output results
+  emit_time(start_time, duration, label, unit, console, log)
 
   result
-}
-
-# Helper: get next pipe_id for a given log
-next_pipe_id <- function(log) {
-  if (is.null(.pipetime_env$pipe_counters[[log]])) {
-    .pipetime_env$pipe_counters[[log]] <- 1L
-  } else {
-    .pipetime_env$pipe_counters[[log]] <- .pipetime_env$pipe_counters[[log]] +
-      1L
-  }
-  .pipetime_env$pipe_counters[[log]]
 }

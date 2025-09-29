@@ -2,50 +2,46 @@
 #'
 #' Prints and/or logs the execution time of an operation.
 #'
-#' @param start POSIXct. Operation start time.
-#' @param end POSIXct. Operation end time.
+#' @param start_time POSIXct. Pipeline start time.
+#' @param duration Numeric. Duration since pipeline start.
 #' @param label Character. Operation label.
 #' @param unit Character. Time unit ("secs", "mins", "hours", "days", or "weeks").
 #' @param console Logical. Print timing to the console?
-#' @param log Character or NULL. Name of a data frame in .pipetime_env for logging.
-#' @param pipe_id Numeric. The ID of the current pipeline.
+#' @param log Character or NULL. Name of a data frame in `.pipetime_env` for logging.
 #'
 #' @return Invisibly, the numeric duration of the operation.
 #' @keywords internal
 #' @noRd
-emit <- function(start, end, label, unit, console, log, pipe_id) {
-  duration <- as.numeric(difftime(end, start, units = unit))
+emit_time <- function(start_time, duration, label, unit, console, log) {
   duration_fmt <- sprintf("%.4f", duration)
-  timestamp <- format(end, "%Y-%m-%d %H:%M:%OS3")
+  timestamp_fmt <- format(start_time, "%Y-%m-%d %H:%M:%OS3")
 
-  build_msg <- function(ts, lbl, dur, unit) {
-    paste0("[", ts, "] ", lbl, ": ", dur, " ", unit)
+  build_msg <- function(ts, label, dur, unit) {
+    paste0("[", ts, "] ", label, ": ", dur, " ", unit)
   }
 
+  # Console
   if (isTRUE(console)) {
     if (requireNamespace("crayon", quietly = TRUE)) {
-      console_msg <- build_msg(
-        timestamp,
+      msg <- build_msg(
+        timestamp_fmt,
         crayon::blue(label),
-        crayon::green(duration_fmt),
+        crayon::green(paste0("+", duration_fmt)),
         crayon::green(unit)
       )
     } else {
-      console_msg <- build_msg(timestamp, label, duration_fmt, unit)
+      msg <- build_msg(timestamp_fmt, label, paste0("+", duration_fmt), unit)
     }
-    message(console_msg)
+    message(msg)
   }
 
+  # Log
   if (!is.null(log)) {
-    if (!is.character(log)) {
-      stop("'log' must be a character string.")
-    }
-
+    stopifnot(is.character(log), length(log) == 1)
     new_row <- data.frame(
-      pipe_id = pipe_id,
-      timestamp = timestamp,
+      timestamp = start_time,
       label = label,
-      duration = as.numeric(duration),
+      duration = duration,
       unit = unit,
       stringsAsFactors = FALSE
     )
@@ -60,6 +56,5 @@ emit <- function(start, end, label, unit, console, log, pipe_id) {
       assign(log, new_row, envir = .pipetime_env)
     }
   }
-
   invisible(duration)
 }

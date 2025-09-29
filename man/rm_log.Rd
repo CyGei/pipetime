@@ -2,13 +2,22 @@
 % Please edit documentation in R/rm_log.R
 \name{rm_log}
 \alias{rm_log}
-\title{Remove a stored timing log}
+\title{Remove a timing log (or all logs)}
 \usage{
-rm_log(log)
+rm_log(log = NULL, force = FALSE)
 }
 \arguments{
-\item{log}{Character. Name of the timing log to delete from \code{.pipetime_env}.}
+\item{log}{Character string or \code{NULL}. Name of the log to remove. If \code{NULL}, all logs are targeted.}
+
+\item{force}{Logical. To remove all logs, \code{force} must be \code{TRUE}. Default: \code{FALSE}.}
+}
+\value{
+Invisibly, \code{TRUE}.
 }
 \description{
-Remove a stored timing log
+Delete a timing log from \code{.pipetime_env}.
+If \code{log = NULL}, all logs are removed, but only when \code{force = TRUE}.
+}
+\seealso{
+\code{\link[=get_log]{get_log()}}
 }
