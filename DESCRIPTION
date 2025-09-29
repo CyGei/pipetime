@@ -13,6 +13,8 @@ Suggests:
     testthat (>= 3.0.0),
     crayon,
     dplyr,
+    ggplot2,
+    stringr,
     tictoc,
     knitr,
     rmarkdown

@@ -1,17 +1,36 @@
-#' Remove a stored timing log
+#' Remove a timing log (or all logs)
 #'
-#' @param log Character. Name of the timing log to delete from `.pipetime_env`.
+#' Delete a timing log from `.pipetime_env`.
+#' If `log = NULL`, all logs are removed, but only when `force = TRUE`.
 #'
+#' @param log Character string or `NULL`. Name of the log to remove. If `NULL`, all logs are targeted.
+#' @param force Logical. To remove all logs, `force` must be `TRUE`. Default: `FALSE`.
+#'
+#' @return Invisibly, `TRUE`.
+#' @seealso [get_log()]
 #' @export
-rm_log <- function(log) {
-  if (!is.character(log) || length(log) != 1) {
-    stop("`log` must be a single character string.")
+rm_log <- function(log = NULL, force = FALSE) {
+  logs <- setdiff(ls(envir = .pipetime_env), "start_times")
+  if (!length(logs)) {
+    warning("No logs to remove.")
+    return(invisible(FALSE))
   }
-  if (exists(log, envir = .pipetime_env, inherits = FALSE)) {
-    rm(list = log, envir = .pipetime_env)
-    invisible(TRUE)
+
+  if (is.null(log)) {
+    if (!force) {
+      stop("To remove all logs, set force = TRUE.")
+    }
+    rm(list = logs, envir = .pipetime_env)
+    .pipetime_env$start_times <- list()
   } else {
-    warning("No data frame named '", log, "' found in pipetime environment.")
-    invisible(FALSE)
+    if (!is.character(log) || length(log) != 1) {
+      stop("`log` must be a single character string.")
+    }
+    if (!exists(log, envir = .pipetime_env, inherits = FALSE)) {
+      stop("No log named '", log, "' found in .pipetime_env.")
+    }
+    rm(list = log, envir = .pipetime_env)
+    .pipetime_env$start_times[[log]] <- NULL
   }
+  invisible(TRUE)
 }

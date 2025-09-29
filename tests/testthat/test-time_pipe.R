@@ -4,80 +4,64 @@ test_that("time_pipe returns input unchanged", {
   expect_identical(out, df)
 })
 
-test_that("time_pipe generates default label", {
-  mydataframe <- data.frame(x = 1:3)
-  expect_message(mydataframe |> time_pipe(), regexp = "mydataframe")
+test_that("labels are generated correctly", {
+  df <- data.frame(x = 1:3)
+  expect_message(df |> time_pipe(), regexp = "df") # default label
+  expect_message(df |> time_pipe("custom"), regexp = "custom") # custom label
 })
 
-test_that("time_pipe generates custom label", {
+test_that("invalid and valid units behave as expected", {
   df <- data.frame(x = 1:3)
-  expect_message(df |> time_pipe("custom label"), regexp = "custom label")
-})
-
-test_that("invalid unit raises error", {
-  df <- data.frame(x = 1:3)
-  expect_error(
-    df |> time_pipe("test", unit = "microsec"),
-    regexp = "should be one of"
-  )
-})
-
-test_that("different time units are accepted", {
-  df <- data.frame(x = 1:3)
+  expect_error(df |> time_pipe("bad", unit = "microsec"))
   for (u in c("secs", "mins", "hours", "days", "weeks")) {
-    expect_message(df |> time_pipe("time unit test", unit = u), regexp = u)
+    expect_message(df |> time_pipe("ok", unit = u), regexp = u)
   }
 })
 
-test_that("time_pipe throws error if log is not character", {
-  df_input <- data.frame(x = 1:3)
-  expect_error(
-    df_input |> time_pipe("test", log = data.frame()),
-    regexp = "'log' must be a character string"
-  )
+test_that("log must be character", {
+  df <- data.frame(x = 1:3)
+  expect_error(df |> time_pipe("bad", log = data.frame()))
 })
 
-test_that("time_pipe stores timings in a data frame", {
+test_that("timings are stored in a log", {
   data.frame(x = 1:3) |>
     dplyr::mutate(y = x * 2) |>
-    time_pipe("step 1", console = FALSE, log = "times") |>
+    time_pipe("step1", console = FALSE, log = "log1") |>
     dplyr::mutate(z = y / 2) |>
-    time_pipe("step 2", console = FALSE, log = "times")
+    time_pipe("step2", console = FALSE, log = "log1")
 
-  expect_true(exists("times", envir = .pipetime_env))
-
-  # Load the stored data frame
-  stored <- get_log("times")
+  stored <- get_log("log1")
   expect_s3_class(stored, "data.frame")
   expect_equal(nrow(stored), 2)
-  expect_equal(stored$label, c("step 1", "step 2"))
+  expect_equal(stored$label, c("step1", "step2"))
 
-  # Remove the stored data frame
-  rm_log("times")
-  expect_false(exists("times", envir = .pipetime_env))
+  rm_log("log1")
+  expect_false(exists("log1", envir = .pipetime_env))
 })
 
-
-test_that("time_pipe time is as expected", {
+test_that("durations reflect elapsed time", {
   data.frame(x = 1:3) |>
-    time_pipe(
-      "pre-sleep",
-      unit = "secs",
-      log = "times",
-      console = FALSE
-    ) |>
+    time_pipe("pre", unit = "secs", log = "log2", console = FALSE) |>
     dplyr::mutate(result = Sys.sleep(0.5)) |>
-    time_pipe(
-      "post-sleep",
-      unit = "secs",
-      log = "times",
-      console = FALSE
-    )
-  times <- get_log("times")
-  pre_time <- times$duration[1]
-  post_time <- times$duration[2]
+    time_pipe("post", unit = "secs", log = "log2", console = FALSE)
 
-  expect_true(post_time >= 0.5)
-  expect_true(pre_time < 0.5)
-  rm_log("times")
+  times <- get_log("log2")
+  expect_true(times$duration[2] >= 0.5)
+  expect_true(times$duration[1] < 0.5)
+
+  rm_log("log2")
+})
+
+test_that("multiple logs can be used independently", {
+  df <- data.frame(x = 1:3)
+  df |> time_pipe("a1", log = "loga", console = FALSE)
+  df |> time_pipe("b1", log = "logb", console = FALSE)
+
+  logs <- get_log(NULL) # all logs
+  expect_named(logs, c("loga", "logb"))
+  expect_equal(nrow(logs$loga), 1)
+  expect_equal(nrow(logs$logb), 1)
+
+  rm_log(NULL, force = TRUE) # clear all
+  expect_length(get_log(NULL), 0)
 })

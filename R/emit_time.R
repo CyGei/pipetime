@@ -2,8 +2,8 @@
 #'
 #' Prints and/or logs the execution time of an operation.
 #'
-#' @param start POSIXct. Operation start time.
-#' @param end POSIXct. Operation end time.
+#' @param start_time POSIXct. Pipeline start time.
+#' @param duration Numeric. Duration since pipeline start.
 #' @param label Character. Operation label.
 #' @param unit Character. Time unit ("secs", "mins", "hours", "days", or "weeks").
 #' @param console Logical. Print timing to the console?
@@ -12,40 +12,36 @@
 #' @return Invisibly, the numeric duration of the operation.
 #' @keywords internal
 #' @noRd
-emit <- function(start, end, label, unit, console, log) {
-  duration <- as.numeric(difftime(end, start, units = unit))
-  duration <- sprintf("%.4f", duration)
-  timestamp <- format(start, "%Y-%m-%d %H:%M:%OS3")
+emit_time <- function(start_time, duration, label, unit, console, log) {
+  duration_fmt <- sprintf("%.4f", duration)
+  timestamp_fmt <- format(start_time, "%Y-%m-%d %H:%M:%OS3")
 
-  build_msg <- function(timestamp, label, duration, unit) {
-    paste0("[", timestamp, "] ", label, ": ", duration, " ", unit)
+  build_msg <- function(ts, label, dur, unit) {
+    paste0("[", ts, "] ", label, ": ", dur, " ", unit)
   }
 
-  # Console message
+  # Console
   if (isTRUE(console)) {
     if (requireNamespace("crayon", quietly = TRUE)) {
-      console_msg <- build_msg(
-        timestamp,
+      msg <- build_msg(
+        timestamp_fmt,
         crayon::blue(label),
-        crayon::green(duration),
+        crayon::green(paste0("+", duration_fmt)),
         crayon::green(unit)
       )
     } else {
-      console_msg <- build_msg(timestamp, label, duration, unit)
+      msg <- build_msg(timestamp_fmt, label, paste0("+", duration_fmt), unit)
     }
-    message(console_msg)
+    message(msg)
   }
 
-  # Log to .pipetime_env
+  # Log
   if (!is.null(log)) {
-    if (!is.character(log)) {
-      stop("'log' must be a character string.")
-    }
-
+    stopifnot(is.character(log), length(log) == 1)
     new_row <- data.frame(
-      timestamp = timestamp,
+      timestamp = start_time,
       label = label,
-      duration = as.numeric(duration),
+      duration = duration,
       unit = unit,
       stringsAsFactors = FALSE
     )

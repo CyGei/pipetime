@@ -15,24 +15,33 @@ time_pipe(
 \arguments{
 \item{.data}{Input object passed through the pipeline.}
 
-\item{label}{Optional. Name for the operation. Defaults to the expression if not provided.}
+\item{label}{Character string. Operation name. Defaults to the expression if \code{NULL}.}
 
-\item{log}{Character or NULL. Name of a data frame to store logs in \code{.pipetime_env}. Defaults to NULL (no storage).}
+\item{log}{Character string or \code{NULL}. Name of a log data frame in \code{.pipetime_env}. Default: \code{NULL}.}
 
-\item{console}{Logical. Print timing to the console? Defaults to TRUE.}
+\item{console}{Logical. Print timing to console? Default: \code{TRUE}.}
 
-\item{unit}{Character. Time unit passed to \code{\link[base:difftime]{base::difftime()}}. One of \code{"secs"}, \code{"mins"}, \code{"hours"}, \code{"days"}, or \code{"weeks"}. Defaults to \code{"secs"}.}
+\item{unit}{Character string. Time unit for \code{\link[base:difftime]{base::difftime()}}. One of \code{"secs"}, \code{"mins"}, \code{"hours"}, \code{"days"}, \code{"weeks"}. Default: \code{"secs"}.}
 }
 \value{
-The input object, unchanged. Timing information is printed or stored separately.
+\code{.data}, unchanged. Timing information is printed and/or stored separately.
 }
 \description{
-Records the runtime of pipeline (|>) operation.
-Can print the timing to the console and optionally log it to a data frame in \code{.pipetime_env}.
-Defaults can be set via \code{options()}.
+Records the runtime of a pipeline (\verb{|>}) from its start to the point where \code{time_pipe()} is called.
+Prints results to the console and/or logs them in \code{.pipetime_env}.
+Defaults can be set via \verb{options(pipetime.*)}.
 }
 \details{
-\code{time_pipe()} measures the elapsed time of the pipeline from its start to the point where \code{time_pipe()} is called.
+\code{time_pipe()} measures elapsed time from pipeline start to the call.
+If \code{log} is set, results are appended to a data frame in \code{.pipetime_env} with columns:
+\itemize{
+\item \code{timestamp}: Pipeline start time (\code{POSIXct})
+\item \code{label}: Operation label
+\item \code{duration}: Elapsed time since pipeline start (\code{numeric})
+\item \code{unit}: Time unit used
+}
+
+Stored logs can be retrieved with \code{\link[=get_log]{get_log()}}.
 }
 \examples{
 library(dplyr)
