@@ -91,7 +91,7 @@
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>sleep <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span> <span class="co"># ~+0.1 sec</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:23:58.956] total pipeline: +0.1097 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:09.774] total pipeline: +0.1098 secs</span></span>
 <span><span class="co">#&gt;   mean_x</span></span>
 <span><span class="co">#&gt; 1      2</span></span></code></pre></div>
 <p>Use multiple <code><a href="reference/time_pipe.html">time_pipe()</a></code> calls to mark steps along a pipeline:</p>
@@ -103,11 +103,11 @@
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute z"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_z <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:23:59.075] compute y: +0.5061 secs</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:23:59.075] compute z: +1.0137 secs</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:23:59.075] total pipeline: +1.0162 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:09.893] compute y: +0.5068 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:09.893] compute z: +1.0175 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:09.893] total pipeline: +1.0191 secs</span></span>
 <span><span class="co">#&gt;     mean_z</span></span>
-<span><span class="co">#&gt; 1 3.158184</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 3.250673</span></span></code></pre></div>
 <p>⏱️ <strong>Each <code><a href="reference/time_pipe.html">time_pipe()</a></code> reports the cumulative time since the pipeline started.</strong></p>
 </div>
 <div class="section level1">
@@ -120,13 +120,13 @@
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute y"</span>, log <span class="op">=</span> <span class="st">"timings"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>z <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="fl">0.5</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"compute z"</span>, log <span class="op">=</span> <span class="st">"timings"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:24:00.102] compute y: +0.5074 secs</span></span>
-<span><span class="co">#&gt; [2025-10-07 20:24:00.102] compute z: +1.0198 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:10.918] compute y: +0.5067 secs</span></span>
+<span><span class="co">#&gt; [2025-10-07 20:30:10.918] compute z: +1.0141 secs</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/get_log.html">get_log</a></span><span class="op">(</span><span class="st">"timings"</span><span class="op">)</span></span>
-<span><span class="co">#&gt;             timestamp     label  duration unit</span></span>
-<span><span class="co">#&gt; 1 2025-10-07 20:24:00 compute y 0.5073919 secs</span></span>
-<span><span class="co">#&gt; 2 2025-10-07 20:24:00 compute z 1.0197811 secs</span></span>
+<span><span class="co">#&gt;             timestamp     label duration unit</span></span>
+<span><span class="co">#&gt; 1 2025-10-07 20:30:10 compute y 0.506748 secs</span></span>
+<span><span class="co">#&gt; 2 2025-10-07 20:30:10 compute z 1.014136 secs</span></span>
 <span><span class="fu"><a href="reference/rm_log.html">rm_log</a></span><span class="op">(</span><span class="st">"timings"</span><span class="op">)</span> <span class="co">#delete the dataframe in .pipetime_env</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="managing-logs">Managing logs<a class="anchor" aria-label="anchor" href="#managing-logs"></a>
@@ -185,8 +185,8 @@
 <ul class="list-unstyled">
 <li><a href="https://github.com/CyGei/pipetime/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/CyGei/pipetime/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
 <li><a href="https://www.codefactor.io/repository/github/cygei/pipetime" class="external-link"><img src="https://www.codefactor.io/repository/github/cygei/pipetime/badge" alt="CodeFactor"></a></li>
-<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 <li><a href="https://app.codecov.io/gh/CyGei/pipetime" class="external-link"><img src="https://codecov.io/gh/CyGei/pipetime/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li><a href="https://lifecycle.r-lib.org/articles/stages.html#experimental" class="external-link"><img src="https://img.shields.io/badge/lifecycle-experimental-orange.svg" alt="Lifecycle: experimental"></a></li>
 </ul>
 </div>
 
