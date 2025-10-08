@@ -5,7 +5,12 @@
 
 [![R-CMD-check](https://github.com/CyGei/pipetime/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CyGei/pipetime/actions/workflows/R-CMD-check.yaml)
 [![CodeFactor](https://www.codefactor.io/repository/github/cygei/pipetime/badge)](https://www.codefactor.io/repository/github/cygei/pipetime)
-
+[![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+![GitHub
+downloads](https://badgen.net/github/downloads/CyGei/pipetime/total)
+[![Codecov test
+coverage](https://codecov.io/gh/CyGei/pipetime/graph/badge.svg)](https://app.codecov.io/gh/CyGei/pipetime)
 <!-- badges: end -->
 
 ⏳ `pipetime` measures elapsed time in R pipelines.
@@ -39,7 +44,7 @@ data.frame(x = 1:3) |>
   mutate(sleep = slow_op(0.1, x)) |>
   summarise(mean_x = mean(x)) |>
   time_pipe("total pipeline") # ~+0.1 sec
-#> [2025-09-28 22:40:14.332] total pipeline: +0.1061 secs
+#> [2025-10-07 20:23:58.956] total pipeline: +0.1097 secs
 #>   mean_x
 #> 1      2
 ```
@@ -54,11 +59,11 @@ data.frame(x = 1:5) |>
   time_pipe("compute z") |>
   summarise(mean_z = mean(z)) |>
   time_pipe("total pipeline")
-#> [2025-09-28 22:40:14.444] compute y: +0.5055 secs
-#> [2025-09-28 22:40:14.444] compute z: +1.0114 secs
-#> [2025-09-28 22:40:14.444] total pipeline: +1.0122 secs
+#> [2025-10-07 20:23:59.075] compute y: +0.5061 secs
+#> [2025-10-07 20:23:59.075] compute z: +1.0137 secs
+#> [2025-10-07 20:23:59.075] total pipeline: +1.0162 secs
 #>     mean_z
-#> 1 2.710958
+#> 1 3.158184
 ```
 
 ⏱️ **Each `time_pipe()` reports the cumulative time since the pipeline
@@ -74,13 +79,13 @@ df <- data.frame(x = 1:5) |>
   time_pipe("compute y", log = "timings") |>
   mutate(z = slow_op(0.5, y)) |>
   time_pipe("compute z", log = "timings")
-#> [2025-09-28 22:40:15.460] compute y: +0.5055 secs
-#> [2025-09-28 22:40:15.460] compute z: +1.0116 secs
+#> [2025-10-07 20:24:00.102] compute y: +0.5074 secs
+#> [2025-10-07 20:24:00.102] compute z: +1.0198 secs
 
 get_log("timings")
 #>             timestamp     label  duration unit
-#> 1 2025-09-28 22:40:15 compute y 0.5054879 secs
-#> 2 2025-09-28 22:40:15 compute z 1.0115728 secs
+#> 1 2025-10-07 20:24:00 compute y 0.5073919 secs
+#> 2 2025-10-07 20:24:00 compute z 1.0197811 secs
 rm_log("timings") #delete the dataframe in .pipetime_env
 ```
 
