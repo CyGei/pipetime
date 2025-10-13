@@ -9,6 +9,9 @@
 coverage](https://codecov.io/gh/CyGei/pipetime/graph/badge.svg)](https://app.codecov.io/gh/CyGei/pipetime)
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
+[![CRAN status](https://www.r-pkg.org/badges/version/pipetime)](https://CRAN.R-project.org/package=pipetime)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/pipetime)](https://CRAN.R-project.org/package=pipetime)
+
 <!-- badges: end -->
 
 ⏳ `pipetime` measures elapsed time in R pipelines.
@@ -19,13 +22,19 @@ fits naturally into [tidyverse](https://www.tidyverse.org/) workflows.
 
 # Installation
 
-Install from GitHub and load alongside `dplyr` for examples:
+Install **pipetime** from CRAN:
 
 ``` r
-# devtools::install_github("CyGei/pipetime")
+install.packages("pipetime")
 library(pipetime)
-library(dplyr)
 ```
+
+Or install the development version from GitHub:
+``` r
+# install.packages("pak")
+pak::pak("CyGei/pipetime")
+```
+
 
 # Example
 
@@ -33,6 +42,8 @@ Place `time_pipe()` at the end of a pipeline to measure total elapsed
 time:
 
 ``` r
+library(dplyr)
+
 slow_op <- function(delay, x) {
   Sys.sleep(delay)  # Simulate a time-consuming operation
   rnorm(n = length(x), mean = x, sd = 1)
