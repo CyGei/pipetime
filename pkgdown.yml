@@ -1,7 +1,10 @@
 pandoc: 3.1.11
-pkgdown: 2.1.3
+pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   timing_R_pipelines: timing_R_pipelines.html
   why_pipetime: why_pipetime.html
-last_built: 2025-10-13T00:18Z
+last_built: 2026-03-18T14:34Z
+urls:
+  reference: https://cygei.github.io/pipetime/reference
+  article: https://cygei.github.io/pipetime/articles

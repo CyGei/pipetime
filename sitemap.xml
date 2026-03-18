@@ -1,15 +1,15 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/LICENSE-text.html</loc></url>
-<url><loc>/LICENSE.html</loc></url>
-<url><loc>/articles/index.html</loc></url>
-<url><loc>/articles/timing_R_pipelines.html</loc></url>
-<url><loc>/articles/why_pipetime.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/reference/get_log.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/rm_log.html</loc></url>
-<url><loc>/reference/time_pipe.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/404.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/LICENSE-text.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/LICENSE.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/articles/index.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/articles/timing_R_pipelines.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/articles/why_pipetime.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/authors.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/index.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/reference/get_log.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/reference/index.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/reference/rm_log.html</loc></url>
+<url><loc>https://cygei.github.io/pipetime/reference/time_pipe.html</loc></url>
 </urlset>
 

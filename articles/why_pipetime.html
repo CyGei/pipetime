@@ -63,14 +63,14 @@
       <img src="../logo.png" class="logo" alt=""><h1>Why pipetime?</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/CyGei/pipetime/blob/main/vignettes/why_pipetime.Rmd" class="external-link"><code>vignettes/why_pipetime.Rmd</code></a></small>
       <div class="d-none name"><code>why_pipetime.Rmd</code></div>
     </div>
 
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cygei.github.io/pipetime/;" class="external-link">pipetime</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://cygei.github.io/pipetime/;">pipetime</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span></code></pre></div>
 <p>R pipelines (<code>|&gt;</code>) allow chaining operations in a
 readable, sequential way. Existing timing tools
@@ -99,7 +99,7 @@ pipeline.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="va">the_time</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   0.008   0.000   0.108</span></span>
+<span><span class="co">#&gt;   0.009   0.000   0.110</span></span>
 <span><span class="va">df</span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span>
@@ -125,7 +125,7 @@ pipeline.</p>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>y <span class="op">=</span> <span class="fu">slow_op</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; total pipeline: 0.103 sec elapsed</span></span>
+<span><span class="co">#&gt; total pipeline: 0.104 sec elapsed</span></span>
 <span><span class="va">df</span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
@@ -141,8 +141,8 @@ pipeline.</p>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"after mutate"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>mean_y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/time_pipe.html">time_pipe</a></span><span class="op">(</span><span class="st">"total pipeline"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [2025-10-13 00:18:34.808] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">+0.1013</span> <span style="color: #00BB00;">secs</span></span></span>
-<span><span class="co">#&gt; [2025-10-13 00:18:34.808] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">+0.1070</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2026-03-18 14:34:46.331] <span style="color: #0000BB;">after mutate</span>: <span style="color: #00BB00;">+0.1018</span> <span style="color: #00BB00;">secs</span></span></span>
+<span><span class="co">#&gt; [2026-03-18 14:34:46.331] <span style="color: #0000BB;">total pipeline</span>: <span style="color: #00BB00;">+0.1082</span> <span style="color: #00BB00;">secs</span></span></span>
 <span><span class="co">#&gt;     mean_y</span></span>
 <span><span class="co">#&gt; 1 4.666667</span></span></code></pre></div>
 </div>
@@ -168,7 +168,7 @@ pipeline.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>
