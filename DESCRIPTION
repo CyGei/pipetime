@@ -14,8 +14,8 @@ Suggests:
     crayon,
     dplyr,
     ggplot2,
-    stringr,
     tictoc,
+    data.table,
     knitr,
     rmarkdown
 Config/testthat/edition: 3

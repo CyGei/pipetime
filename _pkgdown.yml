@@ -1,12 +1,14 @@
-home:
-  title: "pipetime"
-  logo: "man/figures/logo.png"
-  source: README.Rmd
-
+url: https://cygei.github.io/pipetime/
 template:
   bootstrap: 5
-
+  bslib:
+    bootswatch: lux
+    pkgdown-nav-height: 100px
+  logo:
+    height: 250px
 repo:
   url:
     home: https://github.com/CyGei/pipetime
+    issue: https://github.com/CyGei/pipetime/issues
     user: https://github.com/CyGei
+    source: https://github.com/CyGei/pipetime/blob/main/
